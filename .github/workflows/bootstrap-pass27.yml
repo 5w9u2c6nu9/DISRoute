@@ -2,6 +2,8 @@ name: Bootstrap Pass 27 source
 
 on:
   workflow_dispatch:
+  issues:
+    types: [opened]
 
 permissions:
   contents: write
@@ -20,6 +22,7 @@ jobs:
           archive='DISRoute-Implementation-Pass-27-2026-08-21.zip'
           actual="$(sha256sum "$archive" | awk '{print $1}')"
           expected='af13be5f8fddcf79c00bb4b6b8f02a9058776d84615e83de0b30b5ed49a8b1fe'
+          echo "archive_sha256=$actual"
           test "$actual" = "$expected"
           unzip -tq "$archive"
           cp "$archive" /tmp/disroute-pass27.zip
@@ -37,10 +40,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(find . -type f -not -path './.git/*' | wc -l)" -eq 281
-          test "$(find src -name '*.cs' -type f | wc -l)" -eq 124
-          test "$(find src -name '*.csproj' -type f | wc -l)" -eq 18
-          test "$(find src/DISRoute.Data/Migrations/PostgreSql -name '*.sql' -type f | wc -l)" -eq 20
+          files="$(find . -type f -not -path './.git/*' | wc -l)"
+          cs="$(find src -name '*.cs' -type f | wc -l)"
+          projects="$(find src -name '*.csproj' -type f | wc -l)"
+          migrations="$(find db/migrations -name '*.sql' -type f | wc -l)"
+          echo "files=$files cs=$cs projects=$projects migrations=$migrations"
+          test "$files" -eq 281
+          test "$cs" -eq 124
+          test "$projects" -eq 18
+          test "$migrations" -eq 20
 
       - name: Commit authoritative Pass 27 tree
         shell: bash
