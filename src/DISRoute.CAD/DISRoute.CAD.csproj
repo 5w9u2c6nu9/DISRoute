@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <ProjectReference Include="../DISRoute.Client.Common/DISRoute.Client.Common.csproj" />
+    <ProjectReference Include="../DISRoute.Contracts/DISRoute.Contracts.csproj" />
+  </ItemGroup>
+</Project>

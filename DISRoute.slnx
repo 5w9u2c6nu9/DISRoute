@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="src/DISRoute.Domain/DISRoute.Domain.csproj" />
+    <Project Path="src/DISRoute.Application/DISRoute.Application.csproj" />
+    <Project Path="src/DISRoute.Contracts/DISRoute.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="src/DISRoute.Security/DISRoute.Security.csproj" />
+    <Project Path="src/DISRoute.Data/DISRoute.Data.csproj" />
+    <Project Path="src/DISRoute.GIS/DISRoute.GIS.csproj" />
+    <Project Path="src/DISRoute.Video/DISRoute.Video.csproj" />
+    <Project Path="src/DISRoute.Integrations/DISRoute.Integrations.csproj" />
+  </Folder>
+  <Folder Name="/Server/">
+    <Project Path="src/DISRoute.Server/DISRoute.Server.csproj" />
+    <Project Path="src/DISRoute.SelfTest/DISRoute.SelfTest.csproj" />
+    <Project Path="src/DISRoute.LegacyBridge/DISRoute.LegacyBridge.csproj" />
+  </Folder>
+  <Folder Name="/Clients/">
+    <Project Path="src/DISRoute.Client.Common/DISRoute.Client.Common.csproj" />
+    <Project Path="src/DISRoute.CAD/DISRoute.CAD.csproj" />
+    <Project Path="src/DISRoute.Station/DISRoute.Station.csproj" />
+    <Project Path="src/DISRoute.Station.Display/DISRoute.Station.Display.csproj" />
+    <Project Path="src/DISRoute.OperationsCenter/DISRoute.OperationsCenter.csproj" />
+    <Project Path="src/DISRoute.Mobile.Core/DISRoute.Mobile.Core.csproj" />
+    <Project Path="src/DISRoute.Mobile/DISRoute.Mobile.csproj" />
+  </Folder>
+</Solution>

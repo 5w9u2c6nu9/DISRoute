@@ -1,0 +1,23 @@
+{
+  "pass": 27,
+  "qualification": "cross-platform-publish-and-deployment-package",
+  "status": "PASS",
+  "publishedTargets": [
+    "server-linux-x64",
+    "server-win-x64",
+    "cad-win-x64",
+    "station-win-x64",
+    "operations-center-win-x64",
+    "mobile-field-harness-win-x64",
+    "station-display-linux-arm64",
+    "legacy-bridge-win-x64"
+  ],
+  "publishedPayloadFiles": 314,
+  "deploymentZipBytes": 191575638,
+  "deploymentZipSha256": "85095f1806fa1a6960fa261a02d8c17f6cf87a3e1a65bfb50c56c031db86a139",
+  "zipIntegrity": true,
+  "embeddedManifestHashesVerified": true,
+  "windowsScmLiveQualified": false,
+  "raspberryPiHardwareLiveQualified": false,
+  "completedAtUtc": "2026-08-21T21:50:21.588257+00:00"
+}

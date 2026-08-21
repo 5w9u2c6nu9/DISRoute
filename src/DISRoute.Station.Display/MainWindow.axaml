@@ -1,0 +1,9 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="DISRoute.Station.Display.MainWindow"
+        Title="DISRoute Station Display" Width="1080" Height="1920" WindowState="Maximized" WindowDecorations="None" Background="#050607">
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20">
+    <Grid ColumnDefinitions="*,Auto"><TextBlock Text="DISRoute STATION DISPLAY" FontSize="34" FontWeight="Bold"/><TextBlock Grid.Column="1" x:Name="ClockText" FontSize="34"/></Grid>
+    <Border Grid.Row="1" x:Name="ConnectionBanner" Background="#8B0000" Padding="10" Margin="0,16,0,12"><TextBlock x:Name="ConnectionText" Text="CONNECTING" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/></Border>
+    <ListBox Grid.Row="2" x:Name="IncidentItems" Background="#050607" BorderThickness="0" FontSize="24"/>
+    <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="0,12,0,0"><TextBlock x:Name="StationText" FontSize="18"/><TextBlock Grid.Column="1" x:Name="UpdatedText" FontSize="18"/></Grid>
+  </Grid>
+</Window>

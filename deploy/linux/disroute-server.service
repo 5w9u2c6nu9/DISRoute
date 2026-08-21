@@ -1,0 +1,40 @@
+[Unit]
+Description=DISRoute Server
+Documentation=file:/opt/disroute/docs/ops/PRODUCTION-DEPLOYMENT.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=disroute
+Group=disroute
+WorkingDirectory=/opt/disroute/server
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_ENVIRONMENT=Production
+Environment=DISROUTE_CONFIG_FILE=/etc/disroute/appsettings.Production.json
+EnvironmentFile=-/etc/disroute/disroute.env
+ExecStart=/opt/disroute/server/DISRoute.Server
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=90s
+TimeoutStopSec=45s
+KillSignal=SIGTERM
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/var/lib/disroute /var/log/disroute /run/disroute
+
+[Install]
+WantedBy=multi-user.target

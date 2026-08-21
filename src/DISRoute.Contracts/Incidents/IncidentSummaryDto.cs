@@ -1,0 +1,1 @@
+namespace DISRoute.Contracts.Incidents; public sealed record IncidentSummaryDto(Guid Id,string Number,string Nature,string Address,string Status,DateTimeOffset CreatedAtUtc);

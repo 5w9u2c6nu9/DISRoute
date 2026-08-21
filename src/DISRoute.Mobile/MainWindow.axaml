@@ -1,0 +1,120 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="DISRoute.Mobile.MainWindow"
+        Title="DISRoute Mobile"
+        Width="560" Height="940" MinWidth="390" MinHeight="680"
+        Background="#0E1217">
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="10">
+    <Grid ColumnDefinitions="*,Auto" Margin="2,0,2,8">
+      <StackPanel>
+        <TextBlock Text="DISRoute MOBILE" FontSize="23" FontWeight="Bold"/>
+        <TextBlock x:Name="AssignmentText" Text="No unit assignment" Foreground="#B7C1CD"/>
+      </StackPanel>
+      <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+        <TextBlock x:Name="ConnectionText" Text="OFFLINE" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
+        <TextBlock x:Name="QueueText" Text="0 queued" FontSize="12" HorizontalAlignment="Right"/>
+      </StackPanel>
+    </Grid>
+
+    <Border Grid.Row="1" x:Name="DegradedBanner" Background="#45330B" CornerRadius="5" Padding="8" Margin="0,0,0,8" IsVisible="True">
+      <TextBlock x:Name="DegradedText" Text="Offline — no authoritative mobile sync has completed." TextWrapping="Wrap" FontWeight="SemiBold"/>
+    </Border>
+
+    <TabControl Grid.Row="2">
+      <TabItem Header="INCIDENT">
+        <ScrollViewer>
+          <StackPanel Margin="6" Spacing="10">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+              <TextBlock Text="UNIT" VerticalAlignment="Center" FontWeight="Bold"/>
+              <ComboBox Grid.Column="1" x:Name="UnitBox" SelectionChanged="UnitChanged" PlaceholderText="Assigned unit"/>
+            </Grid>
+            <Border BorderBrush="#3C4652" BorderThickness="1" CornerRadius="6" Padding="10">
+              <StackPanel Spacing="4">
+                <TextBlock x:Name="IncidentHeader" Text="NO CURRENT INCIDENT" FontSize="22" FontWeight="Bold"/>
+                <TextBlock x:Name="IncidentAddress" Text="" FontSize="18" TextWrapping="Wrap"/>
+                <TextBlock x:Name="IncidentDetail" Text="Sync to load assignment." Foreground="#B7C1CD" TextWrapping="Wrap"/>
+              </StackPanel>
+            </Border>
+
+            <TextBlock Text="UNIT STATUS" FontWeight="Bold" FontSize="16"/>
+            <UniformGrid Columns="2" Rows="3">
+              <Button Content="EN ROUTE" MinHeight="62" Margin="4" Click="EnRouteClicked" FontSize="16" FontWeight="Bold"/>
+              <Button Content="ON SCENE" MinHeight="62" Margin="4" Click="OnSceneClicked" FontSize="16" FontWeight="Bold"/>
+              <Button Content="CLEARING" MinHeight="62" Margin="4" Click="ClearingClicked" FontSize="16" FontWeight="Bold"/>
+              <Button Content="AVAILABLE" MinHeight="62" Margin="4" Click="AvailableClicked" FontSize="16" FontWeight="Bold"/>
+              <Button Content="COMMAND" MinHeight="62" Margin="4" Click="CommandClicked" FontSize="16" FontWeight="Bold"/>
+              <Button Content="CODE 55" MinHeight="62" Margin="4" Click="Code55Clicked" FontSize="16" FontWeight="Bold"/>
+            </UniformGrid>
+
+            <TextBlock Text="CREW" FontWeight="Bold" FontSize="16"/>
+            <ListBox x:Name="CrewList" MaxHeight="160"/>
+
+            <Border x:Name="MaydayBorder" Background="#561818" CornerRadius="5" Padding="8" IsVisible="False">
+              <TextBlock x:Name="MaydayText" TextWrapping="Wrap" FontWeight="Bold"/>
+            </Border>
+
+            <TextBlock Text="INCIDENT MESSAGES" FontWeight="Bold" FontSize="16"/>
+            <ListBox x:Name="MessageList" MaxHeight="220"/>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+              <TextBox x:Name="NarrativeText" PlaceholderText="Add incident note / narrative" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60"/>
+              <Button Grid.Column="1" Content="QUEUE NOTE" Click="QueueNarrativeClicked" MinWidth="105"/>
+            </Grid>
+            <TextBlock Text="OFFLINE QUEUE / CONFLICT REVIEW" FontWeight="Bold" FontSize="16"/>
+            <TextBlock Text="Accepted items disappear after sync. Rejected/conflicting items remain until corrected or explicitly discarded." Foreground="#B7C1CD" TextWrapping="Wrap"/>
+            <ListBox x:Name="QueueReviewList" MaxHeight="150"/>
+            <Button Content="DISCARD SELECTED QUEUED ITEM" Click="DiscardQueuedClicked" HorizontalAlignment="Left"/>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <TabItem Header="MAP / PREPLAN">
+        <ScrollViewer>
+          <StackPanel Margin="6" Spacing="8">
+            <TextBlock Text="SCENE INTELLIGENCE" FontWeight="Bold" FontSize="17"/>
+            <TextBlock x:Name="SceneText" Text="No incident selected." TextWrapping="Wrap"/>
+            <TextBlock Text="PREPLANS" FontWeight="Bold"/>
+            <ListBox x:Name="PreplanList" MaxHeight="180"/>
+            <TextBlock Text="CRG FLOORS" FontWeight="Bold"/>
+            <ListBox x:Name="CrgList" MaxHeight="180"/>
+            <TextBlock Text="HYDRANTS / WATER" FontWeight="Bold"/>
+            <ListBox x:Name="HydrantList" MaxHeight="180"/>
+            <TextBlock Text="ROAD RESTRICTIONS" FontWeight="Bold"/>
+            <ListBox x:Name="RoadList" MaxHeight="180"/>
+            <TextBlock Text="Map rendering remains provider-neutral; this field client is consuming the authoritative scene package." Foreground="#8F9AAA" TextWrapping="Wrap"/>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <TabItem Header="CHAT / DOCS">
+        <Grid Margin="6" RowDefinitions="Auto,180,Auto,*,Auto" RowSpacing="6">
+          <ComboBox x:Name="ChatChannelBox" SelectionChanged="ChatChannelChanged" PlaceholderText="Select a chat channel"/>
+          <ListBox Grid.Row="1" x:Name="ChatHistoryList"/>
+          <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="6">
+            <TextBox x:Name="ChatText" PlaceholderText="Message"/>
+            <Button Grid.Column="1" Content="SEND / QUEUE" Click="SendChatClicked"/>
+          </Grid>
+          <ListBox Grid.Row="3" x:Name="DocumentList" SelectionChanged="DocumentChanged"/>
+          <TextBox Grid.Row="4" x:Name="DocumentText" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="140"/>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="RADIO">
+        <ScrollViewer>
+          <StackPanel Margin="6" Spacing="8">
+            <TextBlock Text="AUTHORIZED LISTEN-ONLY STREAMS" FontWeight="Bold" FontSize="17"/>
+            <TextBlock Text="No PTT/transmit controls are exposed by DISRoute Mobile." Foreground="#B7C1CD" TextWrapping="Wrap"/>
+            <ListBox x:Name="RadioList" SelectionChanged="RadioChanged"/>
+            <Button Content="OPEN LISTEN-ONLY STREAM" Click="OpenRadioClicked" MinHeight="52"/>
+            <TextBlock x:Name="RadioDetailText" Text="Select an authorized feed." TextWrapping="Wrap" Foreground="#B7C1CD"/>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
+
+    <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto" Margin="0,8,0,0" ColumnSpacing="8">
+      <TextBlock x:Name="ActionText" VerticalAlignment="Center" TextWrapping="Wrap"/>
+      <Button Grid.Column="1" Content="OFFLINE LEASE" Click="LeaseClicked"/>
+      <Button Grid.Column="2" Content="SYNC" Click="SyncClicked" FontWeight="Bold"/>
+    </Grid>
+  </Grid>
+</Window>

@@ -1,0 +1,124 @@
+{
+  "result": "PASS",
+  "qualifiedAtUtc": "2026-08-21T14:14:39.018168+00:00",
+  "migrationLedgerCount": 20,
+  "migrationHashesVerifiedAgainstPublishedSource": true,
+  "migrationHashes": [
+    {
+      "version": 1,
+      "fileName": "001_initial.sql",
+      "sha256": "1934b759cd7142ddc2c9d5b44bec83dc361f56f2bd8e09c48d1345947a79375c"
+    },
+    {
+      "version": 2,
+      "fileName": "002_operational_features.sql",
+      "sha256": "95e132c99c324b27dca42e71f88d1abc2903b902087a100121f49e066b83cb60"
+    },
+    {
+      "version": 3,
+      "fileName": "003_advanced_cad.sql",
+      "sha256": "7168b8dff810a5b6281f8add2d6e1732212deed4f54417320c1c601dd7448a67"
+    },
+    {
+      "version": 4,
+      "fileName": "004_backoffice_depth.sql",
+      "sha256": "d38421b0574da47e1681babec041a0b257e27c3c9cfc51408ed7b636bbf7a6e0"
+    },
+    {
+      "version": 5,
+      "fileName": "005_security_depth.sql",
+      "sha256": "1c3eebc4bc2abba7584ce5677ab023a926f717ccc635d6b4881cfba416bffec5"
+    },
+    {
+      "version": 6,
+      "fileName": "006_audit_integrity.sql",
+      "sha256": "28e678ce5b61f9baf3ea79e8f25eea40e868642a204c00b66578873a2b91e3f3"
+    },
+    {
+      "version": 7,
+      "fileName": "007_durable_journal_ha.sql",
+      "sha256": "49c47b944364d4a7982f841f3d78781cda6192ffe465775b85896e71faa1487d"
+    },
+    {
+      "version": 8,
+      "fileName": "008_operational_messaging.sql",
+      "sha256": "b987f75a63d43fd8c8d9632582105a751d2c05c75619c892cb3b1e1eb0a7a898"
+    },
+    {
+      "version": 9,
+      "fileName": "009_collaborative_narrative_ot.sql",
+      "sha256": "f548aa0f084108965ab999c13a3845f0a59b4e6905c85a4f1b40ba70b36adda9"
+    },
+    {
+      "version": 10,
+      "fileName": "010_ha_topology_fencing.sql",
+      "sha256": "c2fe77fbc23b119e27358b3fafcac773406921830fbedef7f80bf2a22338268d"
+    },
+    {
+      "version": 11,
+      "fileName": "011_historical_replay.sql",
+      "sha256": "bcc25c38bac6bf4663f0be945257331ef53d8ab394074b754617e15e5f658041"
+    },
+    {
+      "version": 12,
+      "fileName": "012_durable_idempotency.sql",
+      "sha256": "c3b1d8e925aea26563910cfa515916c06e4259df5a07307d89499a15ea01f93c"
+    },
+    {
+      "version": 13,
+      "fileName": "013_authoritative_outbox_barrier.sql",
+      "sha256": "62fb5868e7a05119d7e98904107c671210d26fd51fb871098200fe642d3f7376"
+    },
+    {
+      "version": 14,
+      "fileName": "014_rms_reporting_foundation.sql",
+      "sha256": "8eb31b9ea46a5b812ffa7f0c8a2d989b5d46e3a3fba8d99f005c8d0fd6a842d0"
+    },
+    {
+      "version": 15,
+      "fileName": "015_neris_submission_pipeline.sql",
+      "sha256": "af1d2ee4f3b5148c9d73f4f9bf6a792274ca3fe94396dcd2b2f660391f8e9ff0"
+    },
+    {
+      "version": 16,
+      "fileName": "016_workforce_roster_depth.sql",
+      "sha256": "ac646ba2fc567fc7743491c88fbe903102b2a51c637aaf859e24fdf011d79875"
+    },
+    {
+      "version": 17,
+      "fileName": "017_dms_forms_depth.sql",
+      "sha256": "9f8ddf14b2b81db83441731173c708aba8a0ac922315c5f4df519677be76c3a4"
+    },
+    {
+      "version": 18,
+      "fileName": "018_internal_chat.sql",
+      "sha256": "f7cc86c281dd0b1a2e8d24a9260411a9f60dc430d0451e4eee8dd422fdb116a1"
+    },
+    {
+      "version": 19,
+      "fileName": "019_chat_membership_hardening.sql",
+      "sha256": "d209bffea155979fac432e83866b4b87803097d8d2dfa3b642af188c68b29970"
+    },
+    {
+      "version": 20,
+      "fileName": "020_integration_gateways.sql",
+      "sha256": "31cf40d3dd989fd37adf4c0a9ab5851aaafeb62db9f8ffa6520c8abd365db1db"
+    }
+  ],
+  "schemaVersion": 20,
+  "concurrentMigrationStartup": true,
+  "exactlyOneWriter": true,
+  "crashAfterCommitBeforeResponse": true,
+  "staleStandbyReload": true,
+  "ambiguousResponseIncidentId": "8a924b00-e070-4e6c-86fd-f4afc29c1e85",
+  "providerSubmittingCrashNeedsReconciliation": true,
+  "providerOperationId": "9993b130-9814-4609-817c-7c4e23ae7d49",
+  "plannedDrainResume": true,
+  "oldPrimaryReturnFenced": true,
+  "migrationLedgerBackfill": true,
+  "migrationTamperRejected": true,
+  "readOnlyReplicaStartupQualified": true,
+  "logicalBackupRestoreQualified": true,
+  "measuredCrashFailoverMilliseconds": 528,
+  "elapsedMilliseconds": 30694
+}

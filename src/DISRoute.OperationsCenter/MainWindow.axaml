@@ -1,0 +1,395 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="DISRoute.OperationsCenter.MainWindow" Title="DISRoute Operations Center" Width="1500" Height="900"
+        Background="#101317">
+  <Grid RowDefinitions="Auto,*">
+    <Border Grid.Row="0" Background="#181D23" Padding="12" BorderBrush="#303843" BorderThickness="0,0,0,1">
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="12"><TextBlock Text="DISRoute" FontSize="22" FontWeight="Bold"/><TextBlock Text="OPERATIONS CENTER" VerticalAlignment="Center" Foreground="#AAB4C0"/></StackPanel>
+        <TextBlock Grid.Column="1" x:Name="StatusText" Text="Connecting…" VerticalAlignment="Center" Margin="24,0"/>
+        <TextBlock Grid.Column="2" x:Name="LastRefreshText" VerticalAlignment="Center" Foreground="#AAB4C0" Margin="12,0"/>
+        <Button Grid.Column="3" Content="Refresh" Click="RefreshClicked"/>
+      </Grid>
+    </Border>
+    <TabControl Grid.Row="1" Margin="10">
+      <TabItem Header="Health"><ScrollViewer><StackPanel Margin="8" Spacing="10"><TextBlock Text="Platform health" FontSize="20" FontWeight="Bold"/><ItemsControl x:Name="HealthItems"/></StackPanel></ScrollViewer></TabItem>
+      <TabItem Header="Operations"><Grid Margin="8" ColumnDefinitions="*,*,*" RowDefinitions="Auto,*,Auto"><TextBlock Text="Active incidents" FontSize="20" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="Critical alerts" FontSize="20" FontWeight="Bold"/><TextBlock Grid.Column="2" Text="Mayday / Radio Emergency" FontSize="20" FontWeight="Bold"/><ListBox Grid.Row="1" x:Name="IncidentItems" Margin="0,8,8,0"/><ListBox Grid.Row="1" Grid.Column="1" x:Name="AlertItems" Margin="8,8,8,0"/><ListBox Grid.Row="1" Grid.Column="2" x:Name="MaydayItems" Margin="8,8,0,0"/><StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" Spacing="8" Margin="8,8,0,0"><Button Content="Acknowledge" Click="MaydayAcknowledgeClicked"/><Button Content="Assign to Supervisor" Click="MaydayAssignClicked"/><Button Content="Escalate" Click="MaydayEscalateClicked"/><Button Content="Resolve" Click="MaydayResolveClicked"/></StackPanel></Grid></TabItem>
+      <TabItem Header="Clients"><ListBox Margin="8" x:Name="ClientItems"/></TabItem>
+      <TabItem Header="Integrations / Gateways">
+        <Grid Margin="8" ColumnDefinitions="360,*,430" RowDefinitions="*">
+          <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+            <TextBlock Text="Provider health" FontSize="18" FontWeight="Bold"/>
+            <ListBox x:Name="ProviderItems" MinHeight="150" MaxHeight="220"/>
+            <TextBlock Text="Recent normalized gateway events" FontSize="18" FontWeight="Bold" Margin="0,6,0,0"/>
+            <ListBox x:Name="IntegrationEventItems" MinHeight="220"/>
+            <TextBlock Text="Recording references" FontSize="18" FontWeight="Bold" Margin="0,6,0,0"/>
+            <ListBox x:Name="IntegrationRecordingItems" MinHeight="140"/>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Spacing="6" Margin="8,0">
+            <TextBlock Text="Durable provider operations" FontSize="18" FontWeight="Bold"/>
+            <ListBox x:Name="IntegrationOperationItems" MinHeight="220" SelectionChanged="IntegrationOperationSelectionChanged"/>
+            <TextBlock Text="Attempt history" FontSize="18" FontWeight="Bold"/>
+            <ListBox x:Name="IntegrationAttemptItems" MinHeight="120"/>
+            <WrapPanel>
+              <CheckBox x:Name="IntegrationConfirmDuplicateCheck" Content="Acknowledge possible duplicate" Margin="0,0,8,6"/>
+              <Button Content="Retry Selected" Click="IntegrationRetryClicked" Margin="0,0,8,6"/>
+            </WrapPanel>
+            <Grid ColumnDefinitions="130,*,Auto" Margin="0,0,0,6">
+              <TextBox x:Name="IntegrationReconcileResolutionText" Text="Confirmed" PlaceholderText="Confirmed / Not-Sent" Margin="0,0,6,0"/>
+              <TextBox Grid.Column="1" x:Name="IntegrationReconcileReferenceText" PlaceholderText="Provider reference" Margin="0,0,6,0"/>
+              <Button Grid.Column="2" Content="Reconcile" Click="IntegrationReconcileClicked"/>
+            </Grid>
+            <TextBlock Text="Cameras" FontSize="18" FontWeight="Bold"/>
+            <ListBox x:Name="IntegrationCameraItems" MinHeight="100"/>
+            <TextBlock Text="Vessels / AIS" FontSize="18" FontWeight="Bold"/>
+            <ListBox x:Name="IntegrationVesselItems" MinHeight="100"/>
+          </StackPanel>
+          <ScrollViewer Grid.Column="2" Margin="8,0,0,0">
+            <StackPanel Spacing="6">
+              <TextBlock Text="Gateway / provider test console" FontSize="18" FontWeight="Bold"/>
+              <TextBlock Text="These controls exercise normalized gateway/provider contracts. Simulation providers are development/test adapters, not vendor certification." TextWrapping="Wrap" Foreground="#AAB4C0"/>
+              <TextBlock Text="911 ingest" FontWeight="Bold" Margin="0,6,0,0"/>
+              <Grid ColumnDefinitions="*,*"><TextBox x:Name="Integration911CallIdText" Text="SIM-CALL-001" PlaceholderText="Provider call ID" Margin="0,0,4,4"/><TextBox Grid.Column="1" x:Name="Integration911StateText" Text="Open" PlaceholderText="Open / Answered / Ended" Margin="4,0,0,4"/></Grid>
+              <TextBox x:Name="Integration911LocationText" Text="100 Main St" PlaceholderText="Location"/>
+              <TextBox x:Name="Integration911NatureText" Text="Structure fire" PlaceholderText="Nature"/>
+              <Button Content="Ingest 911 Event" Click="Integration911Clicked"/>
+              <TextBlock Text="Radio gateway" FontWeight="Bold" Margin="0,6,0,0"/>
+              <Grid ColumnDefinitions="*,*"><TextBox x:Name="IntegrationRadioNativeIdText" Text="RADIO-101" PlaceholderText="Native radio ID" Margin="0,0,4,4"/><TextBox Grid.Column="1" x:Name="IntegrationRadioEventText" Text="Emergency" PlaceholderText="Emergency / Status" Margin="4,0,0,4"/></Grid>
+              <TextBox x:Name="IntegrationRadioUnitIdText" PlaceholderText="Unit GUID (optional)"/>
+              <TextBox x:Name="IntegrationRadioStatusText" Text="Available" PlaceholderText="Status text for Status event"/>
+              <WrapPanel><Button Content="Ingest Radio Event" Click="IntegrationRadioClicked" Margin="0,0,8,0"/><Button Content="Clear Emergency" Click="IntegrationClearRadioClicked"/></WrapPanel>
+              <TextBlock Text="AIS / marine" FontWeight="Bold" Margin="0,6,0,0"/>
+              <Grid ColumnDefinitions="*,*"><TextBox x:Name="IntegrationAisMmsiText" Text="367000001" PlaceholderText="MMSI" Margin="0,0,4,4"/><TextBox Grid.Column="1" x:Name="IntegrationAisNameText" Text="SIM VESSEL" PlaceholderText="Vessel name" Margin="4,0,0,4"/></Grid>
+              <Grid ColumnDefinitions="*,*"><TextBox x:Name="IntegrationAisLatitudeText" Text="40.72" PlaceholderText="Latitude" Margin="0,0,4,4"/><TextBox Grid.Column="1" x:Name="IntegrationAisLongitudeText" Text="-74.02" PlaceholderText="Longitude" Margin="4,0,0,4"/></Grid>
+              <Button Content="Ingest AIS Position" Click="IntegrationAisClicked"/>
+              <TextBlock Text="Routing" FontWeight="Bold" Margin="0,6,0,0"/>
+              <Grid ColumnDefinitions="*,*"><TextBox x:Name="IntegrationRouteFromText" Text="40.72,-74.02" PlaceholderText="From lat,long" Margin="0,0,4,4"/><TextBox Grid.Column="1" x:Name="IntegrationRouteToText" Text="40.73,-74.01" PlaceholderText="To lat,long" Margin="4,0,0,4"/></Grid>
+              <Button Content="Calculate Provider Route" Click="IntegrationRouteClicked"/>
+              <TextBlock x:Name="IntegrationRouteResultText" TextWrapping="Wrap" Foreground="#AAB4C0"/>
+              <TextBlock Text="Recording / Eventide-style lookup" FontWeight="Bold" Margin="0,6,0,0"/>
+              <TextBox x:Name="IntegrationRecordingIncidentText" PlaceholderText="Incident GUID (optional)"/>
+              <TextBox x:Name="IntegrationRecordingChannelText" Text="Dispatch 1" PlaceholderText="Channel"/>
+              <Button Content="Query Recordings" Click="IntegrationRecordingClicked"/>
+              <TextBlock Text="ONVIF discovery" FontWeight="Bold" Margin="0,6,0,0"/>
+              <TextBox x:Name="IntegrationCameraStationText" PlaceholderText="Station GUID (optional)"/>
+              <Button Content="Discover Cameras" Click="IntegrationDiscoverCamerasClicked"/>
+              <ListBox x:Name="IntegrationDiscoveryItems" MinHeight="100"/>
+              <Button Content="Import Selected Camera" Click="IntegrationImportCameraClicked"/>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </TabItem>
+      <TabItem Header="Workforce">
+        <TabControl Margin="8">
+          <TabItem Header="Roster / Staffing">
+            <Grid Margin="8" ColumnDefinitions="340,420,*" RowDefinitions="Auto,*">
+              <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+                <TextBlock Text="Work date" VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBox x:Name="WorkforceDateText" Width="120"/>
+                <Button Content="Load" Click="WorkforceLoadDateClicked"/>
+                <Button Content="Publish Roster" Click="WorkforcePublishClicked"/>
+                <CheckBox x:Name="WorkforceIncludeChangesCheck" Content="Include changes in print" IsChecked="True" VerticalAlignment="Center"/>
+                <TextBox x:Name="WorkforcePrinterKeyText" Width="120" Text="default" PlaceholderText="Printer key"/>
+                <Button Content="Preview Print" Click="WorkforcePreviewClicked"/>
+                <Button Content="Print" Click="WorkforcePrintClicked"/>
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                <TextBlock Text="Current effective assignments" FontSize="18" FontWeight="Bold"/>
+                <TextBlock x:Name="WorkforceStaffingText" TextWrapping="Wrap"/>
+                <ListBox x:Name="WorkforceAssignmentItems" MinHeight="260"/>
+                <TextBlock Text="Assignment / open shift" FontWeight="Bold"/>
+                <ComboBox x:Name="WorkforceStationItems" PlaceholderText="Station"/>
+                <ComboBox x:Name="WorkforceUnitItems" PlaceholderText="Apparatus (optional)"/>
+                <Grid ColumnDefinitions="*,*">
+                  <TextBox x:Name="WorkforceShiftText" Text="Day" PlaceholderText="Shift" Margin="0,0,4,4"/>
+                  <TextBox Grid.Column="1" x:Name="WorkforcePositionText" PlaceholderText="Position" Margin="4,0,0,4"/>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                  <TextBox x:Name="WorkforceEmployeeIdText" PlaceholderText="Employee ID" Margin="0,0,4,4"/>
+                  <TextBox Grid.Column="1" x:Name="WorkforceEmployeeNameText" PlaceholderText="Employee name" Margin="4,0,0,4"/>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                  <TextBox x:Name="WorkforceQualificationText" PlaceholderText="Qualification" Margin="0,0,4,4"/>
+                  <TextBox Grid.Column="1" x:Name="WorkforceAssignmentTypeText" Text="Regular" PlaceholderText="Assignment type" Margin="4,0,0,4"/>
+                </Grid>
+                <WrapPanel>
+                  <Button Content="Add Assigned" Click="WorkforceAddAssignedClicked" Margin="0,0,6,6"/>
+                  <Button Content="Add Open Shift" Click="WorkforceAddOpenClicked" Margin="0,0,6,6"/>
+                  <Button Content="Call Out Selected" Click="WorkforceCallOutClicked" Margin="0,0,6,6"/>
+                </WrapPanel>
+                <TextBlock Text="Atomic relief — uses employee fields above" Foreground="#AAB4C0"/>
+                <Button Content="Relieve Selected With Employee Above" Click="WorkforceRelieveClicked"/>
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="1" Spacing="6" Margin="8,0">
+                <TextBlock Text="Posted roster revisions" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="WorkforceSnapshotItems" MinHeight="160"/>
+                <TextBlock Text="Same-day schedule changes" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="WorkforceChangeItems" MinHeight="220"/>
+                <TextBlock Text="Staffing rule results" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="WorkforceStaffingRuleResultItems" MinHeight="160"/>
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="2" Spacing="6" Margin="8,0,0,0">
+                <TextBlock Text="Roster print preview" FontSize="18" FontWeight="Bold"/>
+                <TextBox x:Name="WorkforcePrintPreviewText" IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap" MinHeight="570" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+              </StackPanel>
+            </Grid>
+          </TabItem>
+          <TabItem Header="Staffing Rules">
+            <Grid Margin="8" ColumnDefinitions="*,360" RowDefinitions="*">
+              <StackPanel Spacing="6" Margin="0,0,8,0">
+                <TextBlock Text="Qualification-aware minimum staffing rules" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="WorkforceRuleItems"/>
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="6" Margin="8,0,0,0">
+                <TextBlock Text="Add staffing rule" FontSize="18" FontWeight="Bold"/>
+                <CheckBox x:Name="WorkforceRuleAgencyWideCheck" Content="Agency-wide (ignore station)"/>
+                <ComboBox x:Name="WorkforceRuleStationItems" PlaceholderText="Station"/>
+                <TextBox x:Name="WorkforceRuleShiftText" Text="Day" PlaceholderText="Shift"/>
+                <TextBox x:Name="WorkforceRulePositionText" PlaceholderText="Position"/>
+                <TextBox x:Name="WorkforceRuleMinimumText" Text="1" PlaceholderText="Minimum count"/>
+                <TextBox x:Name="WorkforceRuleQualificationText" PlaceholderText="Required qualification (optional)"/>
+                <Button Content="Add Rule" Click="WorkforceAddRuleClicked"/>
+                <TextBlock Text="Rules flag deficiencies only. DISRoute does not autonomously assign personnel." TextWrapping="Wrap" Foreground="#AAB4C0"/>
+              </StackPanel>
+            </Grid>
+          </TabItem>
+          <TabItem Header="Requests / Time">
+            <Grid Margin="8" ColumnDefinitions="*,*,*" RowDefinitions="*,*">
+              <ListBox x:Name="LeaveItems" Margin="0,0,8,8"/>
+              <ListBox Grid.Column="1" x:Name="TradeItems" Margin="8,0,8,8"/>
+              <ListBox Grid.Column="2" x:Name="RotationItems" Margin="8,0,0,8"/>
+              <ListBox Grid.Row="1" x:Name="OvertimeItems" Margin="0,8,8,0"/>
+              <ListBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="TimesheetItems" Margin="8,8,0,0"/>
+            </Grid>
+          </TabItem>
+        </TabControl>
+      </TabItem>
+      <TabItem Header="Documents &amp; Forms">
+        <TabControl Margin="8">
+          <TabItem Header="DMS">
+            <Grid Margin="8" ColumnDefinitions="300,330,*" RowDefinitions="*">
+              <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                <TextBlock Text="Documents" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="DmsDocumentItems" MinHeight="300" SelectionChanged="DmsDocumentSelectionChanged"/>
+                <TextBlock Text="Create document" FontWeight="Bold"/>
+                <TextBox x:Name="DmsTitleText" PlaceholderText="Title"/>
+                <TextBox x:Name="DmsClassificationText" PlaceholderText="Classification (Internal / Restricted / Public)" Text="Internal"/>
+                <TextBox x:Name="DmsContentText" PlaceholderText="Document content" AcceptsReturn="True" Height="120" TextWrapping="Wrap"/>
+                <Button Content="Create Document" Click="DmsCreateDocumentClicked"/>
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="6" Margin="8,0">
+                <TextBlock Text="Immutable revisions" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="DmsRevisionItems" MinHeight="210" SelectionChanged="DmsRevisionSelectionChanged"/>
+                <TextBox x:Name="DmsRevisionContentText" PlaceholderText="Content for new revision" AcceptsReturn="True" Height="110" TextWrapping="Wrap"/>
+                <Button Content="Create New Draft Revision" Click="DmsCreateRevisionClicked"/>
+                <TextBlock Text="Approval route" FontWeight="Bold"/>
+                <TextBox x:Name="DmsApprovalNameText" PlaceholderText="Workflow name" Text="Document Publication Approval"/>
+                <TextBox x:Name="DmsApprovalStepsText" PlaceholderText="Approvers, comma separated" Text="Supervisor,Chief"/>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <Button Content="Start Sequential Approval" Click="DmsStartApprovalClicked"/>
+                  <Button Content="Publish Approved Revision" Click="DmsPublishRevisionClicked"/>
+                </StackPanel>
+                <TextBlock x:Name="DmsRevisionDetailText" TextWrapping="Wrap"/>
+              </StackPanel>
+              <TabControl Grid.Column="2" Margin="8,0,0,0">
+                <TabItem Header="Distribution / Required Read">
+                  <Grid Margin="8" RowDefinitions="Auto,Auto,*" ColumnDefinitions="*,*">
+                    <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="6">
+                      <ComboBox x:Name="DmsScopeTypeCombo" Width="110" SelectedIndex="0"><ComboBoxItem Content="Agency"/><ComboBoxItem Content="Station"/><ComboBoxItem Content="Role"/><ComboBoxItem Content="User"/></ComboBox>
+                      <TextBox x:Name="DmsScopeValueText" Width="150" PlaceholderText="Scope value"/>
+                      <TextBox x:Name="DmsRecipientsText" Width="230" PlaceholderText="Recipients, comma separated"/>
+                      <CheckBox x:Name="DmsRequiredReadCheck" Content="Required read" IsChecked="True"/>
+                      <TextBox x:Name="DmsDueHoursText" Width="90" PlaceholderText="Due hours" Text="24"/>
+                      <Button Content="Distribute" Click="DmsDistributeClicked"/>
+                    </StackPanel>
+                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" x:Name="DmsRequiredReadSummaryText" Margin="0,8,0,4" FontWeight="Bold"/>
+                    <ListBox Grid.Row="2" x:Name="DmsDistributionItems" Margin="0,4,8,0"/>
+                    <ListBox Grid.Row="2" Grid.Column="1" x:Name="DmsReceiptItems" Margin="8,4,0,0"/>
+                  </Grid>
+                </TabItem>
+                <TabItem Header="Assets / Links">
+                  <Grid Margin="8" RowDefinitions="Auto,160,Auto,*">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBox x:Name="DmsAssetFileNameText" Width="180" PlaceholderText="Asset file name"/>
+                      <TextBox x:Name="DmsAssetContentTypeText" Width="150" PlaceholderText="Content type" Text="application/pdf"/>
+                      <TextBox x:Name="DmsAssetStorageText" Width="250" PlaceholderText="DMS/storage reference"/>
+                      <TextBox x:Name="DmsAssetShaText" Width="220" PlaceholderText="Optional SHA-256"/>
+                      <Button Content="Add Asset to Draft" Click="DmsAddAssetClicked"/>
+                    </StackPanel>
+                    <ListBox Grid.Row="1" x:Name="DmsAssetItems" Margin="0,8,0,8"/>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="6">
+                      <ComboBox x:Name="DmsLinkTypeCombo" Width="120" SelectedIndex="0"><ComboBoxItem Content="Incident"/><ComboBoxItem Content="RmsReport"/><ComboBoxItem Content="Unit"/><ComboBoxItem Content="Station"/><ComboBoxItem Content="Form"/><ComboBoxItem Content="Personnel"/></ComboBox>
+                      <TextBox x:Name="DmsLinkKeyText" Width="300" PlaceholderText="Entity GUID or personnel key"/>
+                      <TextBox x:Name="DmsLinkRelationshipText" Width="160" PlaceholderText="Relationship" Text="Reference"/>
+                      <Button Content="Link Selected Revision" Click="DmsLinkClicked"/>
+                    </StackPanel>
+                    <ListBox Grid.Row="3" x:Name="DmsLinkItems" Margin="0,8,0,0"/>
+                  </Grid>
+                </TabItem>
+              </TabControl>
+            </Grid>
+          </TabItem>
+          <TabItem Header="Forms">
+            <Grid Margin="8" ColumnDefinitions="*,*,*">
+              <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                <TextBlock Text="Form templates" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="FormTemplateItems" MinHeight="260"/>
+                <TextBox x:Name="FormTemplateNameText" PlaceholderText="Template name"/>
+                <TextBox x:Name="FormTemplateSchemaText" PlaceholderText="Schema JSON" AcceptsReturn="True" Height="120"/>
+                <StackPanel Orientation="Horizontal" Spacing="6"><Button Content="Create Version" Click="FormTemplateCreateClicked"/><Button Content="Publish Selected" Click="FormTemplatePublishClicked"/></StackPanel>
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="6" Margin="8,0">
+                <TextBlock Text="Forms" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="FormItems" MinHeight="260" SelectionChanged="FormSelectionChanged"/>
+                <TextBox x:Name="FormIncidentIdText" PlaceholderText="Optional incident GUID"/>
+                <TextBox x:Name="FormValuesText" PlaceholderText="Values JSON" AcceptsReturn="True" Height="120"/>
+                <Button Content="Create From Selected Published Template" Click="FormCreateClicked"/>
+                <TextBox x:Name="FormSignatureMeaningText" PlaceholderText="Signature meaning" Text="Approved / certified by signer"/>
+                <Button Content="Sign Selected Form" Click="FormSignClicked"/>
+              </StackPanel>
+              <StackPanel Grid.Column="2" Spacing="6" Margin="8,0,0,0">
+                <TextBlock Text="Immutable signatures" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="FormSignatureItems" MinHeight="420"/>
+              </StackPanel>
+            </Grid>
+          </TabItem>
+          <TabItem Header="Approvals">
+            <Grid Margin="8" ColumnDefinitions="*,*" RowDefinitions="*,Auto">
+              <ListBox x:Name="WorkflowItems" Margin="0,0,8,0" SelectionChanged="WorkflowSelectionChanged"/>
+              <ListBox Grid.Column="1" x:Name="ApprovalStepItems" Margin="8,0,0,0"/>
+              <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
+                <TextBox x:Name="ApprovalCommentText" Width="360" PlaceholderText="Decision comment"/>
+                <Button Content="Approve Pending" Click="ApprovalApproveClicked"/>
+                <Button Content="Return Pending" Click="ApprovalReturnClicked"/>
+                <Button Content="Deny Pending" Click="ApprovalDenyClicked"/>
+              </StackPanel>
+            </Grid>
+          </TabItem>
+        </TabControl>
+      </TabItem>
+      <TabItem Header="Chat / Communications">
+        <Grid Margin="8" ColumnDefinitions="300,*,340" RowDefinitions="*,Auto">
+          <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+            <TextBlock Text="Channels" FontSize="18" FontWeight="Bold"/>
+            <ListBox x:Name="ChatChannelItems" MinHeight="300" SelectionChanged="ChatChannelSelectionChanged"/>
+            <StackPanel Orientation="Horizontal" Spacing="6"><Button Content="Mark Read" Click="ChatMarkReadClicked"/><Button Content="Archive / Restore" Click="ChatArchiveClicked"/></StackPanel>
+            <TextBlock Text="Create channel" FontWeight="Bold"/>
+            <ComboBox x:Name="ChatTypeItems" SelectedIndex="2"><ComboBoxItem Content="Direct"/><ComboBoxItem Content="Station"/><ComboBoxItem Content="Group"/><ComboBoxItem Content="Supervisor"/><ComboBoxItem Content="Agency"/><ComboBoxItem Content="MutualAid"/></ComboBox>
+            <TextBox x:Name="ChatChannelNameText" PlaceholderText="Channel name"/>
+            <TextBox x:Name="ChatTopicText" PlaceholderText="Topic"/>
+            <TextBox x:Name="ChatMembersText" PlaceholderText="Members (user IDs, comma separated)"/>
+            <TextBox x:Name="ChatRolesText" PlaceholderText="Allowed roles (optional)"/>
+            <TextBox x:Name="ChatPartnerAgencyText" PlaceholderText="Partner agency GUIDs (MutualAid)"/>
+            <TextBox x:Name="ChatStationIdText" PlaceholderText="Station GUID (required for Station)"/>
+            <ComboBox x:Name="ChatOperationalGroupItems" PlaceholderText="Operational group (required for Group)"/>
+            <TextBox x:Name="ChatIncidentIdText" PlaceholderText="Channel incident GUID (optional)"/>
+            <Button Content="Create Channel" Click="ChatCreateChannelClicked"/>
+          </StackPanel>
+          <Grid Grid.Column="1" Margin="8,0" RowDefinitions="*,Auto,Auto">
+            <ListBox x:Name="ChatMessageItems"/>
+            <Grid Grid.Row="1" ColumnDefinitions="*,140,140" Margin="0,8,0,0">
+              <TextBox x:Name="ChatMessageBodyText" PlaceholderText="Message" AcceptsReturn="True" Height="72" TextWrapping="Wrap"/>
+              <TextBox Grid.Column="1" x:Name="ChatPriorityText" Text="Normal" Margin="8,0,0,0"/>
+              <TextBox Grid.Column="2" x:Name="ChatClassificationText" Text="Operational" Margin="8,0,0,0"/>
+            </Grid>
+            <StackPanel Grid.Row="2" Spacing="6" Margin="0,8,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="6"><TextBox x:Name="ChatMessageIncidentText" Width="280" PlaceholderText="Linked incident GUID"/><TextBox x:Name="ChatMentionsText" Width="240" PlaceholderText="Mentions (user IDs)"/><Button Content="Send" FontWeight="Bold" Click="ChatSendClicked"/></StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="6"><TextBox x:Name="ChatAttachmentNameText" Width="170" PlaceholderText="Attachment name"/><TextBox x:Name="ChatAttachmentTypeText" Width="170" PlaceholderText="Content type"/><TextBox x:Name="ChatAttachmentStorageText" Width="260" PlaceholderText="Storage/DMS reference"/><TextBox x:Name="ChatAttachmentHashText" Width="220" PlaceholderText="SHA-256 (optional)"/></StackPanel>
+            </StackPanel>
+          </Grid>
+          <StackPanel Grid.Column="2" Spacing="6" Margin="8,0,0,0">
+            <TextBlock Text="Presence" FontSize="18" FontWeight="Bold"/>
+            <TextBlock x:Name="ChatRealtimeStateText" Text="Realtime: connecting"/>
+            <ListBox x:Name="ChatPresenceItems" Height="170"/>
+            <TextBlock Text="Search accessible history" FontWeight="Bold"/>
+            <StackPanel Orientation="Horizontal" Spacing="6"><TextBox x:Name="ChatSearchText" Width="230"/><Button Content="Search" Click="ChatSearchClicked"/></StackPanel>
+            <ListBox x:Name="ChatSearchItems" MinHeight="250"/>
+          </StackPanel>
+          <TextBlock Grid.Row="1" Grid.ColumnSpan="3" x:Name="ChatStatusText" Text="Chat ready." Margin="0,8,0,0" TextWrapping="Wrap"/>
+        </Grid>
+      </TabItem>
+      <TabItem Header="RMS">
+        <TabControl Margin="8">
+          <TabItem Header="Incident Reports">
+            <Grid Margin="8" ColumnDefinitions="280,360,*" RowDefinitions="Auto,*,Auto">
+              <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                <TextBlock Text="CAD incidents" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="RmsIncidentItems" MinHeight="420"/>
+                <TextBlock Text="Summary / amendment text" FontWeight="Bold"/>
+                <TextBox x:Name="RmsSummaryText" AcceptsReturn="True" Height="90" TextWrapping="Wrap"/>
+                <Button Content="Create report from CAD" Click="RmsCreateClicked"/>
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="6" Margin="8,0">
+                <TextBlock Text="RMS incident reports" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="RmsReportItems" MinHeight="260" SelectionChanged="RmsReportSelectionChanged"/>
+                <TextBlock x:Name="RmsValidationText" Text="Select a report." TextWrapping="Wrap"/>
+                <WrapPanel Orientation="Horizontal">
+                  <Button Content="Refresh CAD facts" Click="RmsRefreshCadClicked" Margin="0,0,6,6"/>
+                  <Button Content="Save Draft" Click="RmsSaveDraftClicked" Margin="0,0,6,6"/>
+                  <Button Content="Submit Review" Click="RmsSubmitReviewClicked" Margin="0,0,6,6"/>
+                  <Button Content="Return to Draft" Click="RmsReturnDraftClicked" Margin="0,0,6,6"/>
+                  <Button Content="Approve / Finalize" Click="RmsFinalizeClicked" Margin="0,0,6,6"/>
+                  <Button Content="Amend Finalized" Click="RmsAmendClicked" Margin="0,0,6,6"/>
+                </WrapPanel>
+                <TextBlock Text="Reason / review notes" FontWeight="Bold"/>
+                <TextBox x:Name="RmsReasonText"/>
+                <TextBlock Text="Attachment reference" FontWeight="Bold"/>
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto">
+                  <TextBox x:Name="RmsAttachmentName" PlaceholderText="File name" Margin="0,0,4,4"/>
+                  <TextBox Grid.Column="1" x:Name="RmsAttachmentClassification" PlaceholderText="Classification" Margin="4,0,0,4"/>
+                  <TextBox Grid.Row="1" Grid.ColumnSpan="2" x:Name="RmsAttachmentStorage" PlaceholderText="DMS/storage reference" Margin="0,0,0,4"/>
+                  <TextBox Grid.Row="2" Grid.ColumnSpan="2" x:Name="RmsAttachmentDescription" PlaceholderText="Description"/>
+                </Grid>
+                <Button Content="Add Attachment Reference" Click="RmsAddAttachmentClicked"/>
+              </StackPanel>
+              <Grid Grid.Column="2" Margin="8,0,0,0" RowDefinitions="2*,*,*">
+                <TextBox x:Name="RmsReportDetailText" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                <ListBox Grid.Row="1" x:Name="RmsVersionItems" Margin="0,8,0,0"/>
+                <ListBox Grid.Row="2" x:Name="RmsAttachmentItems" Margin="0,8,0,0"/>
+              </Grid>
+            </Grid>
+          </TabItem>
+          <TabItem Header="NERIS Submissions">
+            <Grid Margin="8" ColumnDefinitions="300,390,*" RowDefinitions="*">
+              <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                <TextBlock Text="Finalized RMS reports" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="NerisRmsReportItems" MinHeight="420"/>
+                <TextBlock Text="Bridge profile" FontWeight="Bold"/>
+                <TextBox x:Name="NerisProfileText" Text="DISRoute-NERIS-Bridge-2026.1"/>
+                <Button Content="Build NERIS Projection" Click="NerisBuildClicked"/>
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="6" Margin="8,0">
+                <TextBlock Text="Durable submission queue" FontSize="18" FontWeight="Bold"/>
+                <ListBox x:Name="NerisSubmissionItems" MinHeight="260" SelectionChanged="NerisSubmissionSelectionChanged"/>
+                <TextBlock Text="Provider key (blank = configured/default)" FontWeight="Bold"/>
+                <TextBox x:Name="NerisProviderKeyText"/>
+                <WrapPanel Orientation="Horizontal">
+                  <Button Content="Validate Provider" Click="NerisValidateProviderClicked" Margin="0,0,6,6"/>
+                  <Button Content="Queue" Click="NerisQueueClicked" Margin="0,0,6,6"/>
+                  <Button Content="Retry" Click="NerisRetryClicked" Margin="0,0,6,6"/>
+                </WrapPanel>
+                <CheckBox x:Name="NerisConfirmDuplicateCheck" Content="I understand an unknown prior attempt may have reached the provider"/>
+                <TextBlock Text="Reconcile an ambiguous in-flight attempt" FontWeight="Bold"/>
+                <TextBox x:Name="NerisReconcileResolutionText" PlaceholderText="confirmed / accepted / failed"/>
+                <TextBox x:Name="NerisReconcileReferenceText" PlaceholderText="Provider reference (required for confirmed/accepted)"/>
+                <TextBox x:Name="NerisReconcileNotesText" PlaceholderText="Reconciliation notes"/>
+                <Button Content="Reconcile" Click="NerisReconcileClicked"/>
+              </StackPanel>
+              <Grid Grid.Column="2" Margin="8,0,0,0" RowDefinitions="Auto,2*,*">
+                <TextBlock x:Name="NerisProviderValidationText" Text="Select a NERIS submission." TextWrapping="Wrap" Margin="0,0,0,8"/>
+                <TextBox Grid.Row="1" x:Name="NerisSubmissionDetailText" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                <ListBox Grid.Row="2" x:Name="NerisAttemptItems" Margin="0,8,0,0"/>
+              </Grid>
+            </Grid>
+          </TabItem>
+          <TabItem Header="Prevention / NERIS / Other">
+            <Grid Margin="8" ColumnDefinitions="*,*,*,*" RowDefinitions="*,*">
+              <ListBox x:Name="InspectionItems" Margin="0,0,8,8"/><ListBox Grid.Column="1" x:Name="PermitItems" Margin="8,0,8,8"/><ListBox Grid.Column="2" x:Name="NerisItems" Margin="8,0,8,8"/><ListBox Grid.Column="3" x:Name="ViolationItems" Margin="8,0,0,8"/><ListBox Grid.Row="1" x:Name="HazmatItems" Margin="0,8,8,0"/><ListBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="InvestigationItems" Margin="8,8"/><ListBox Grid.Row="1" Grid.Column="3" x:Name="QualificationItems" Margin="8,8,0,0"/>
+            </Grid>
+          </TabItem>
+        </TabControl>
+      </TabItem>
+      <TabItem Header="Security"><Grid Margin="8" ColumnDefinitions="*,*"><ListBox x:Name="DeviceItems" Margin="0,0,8,0"/><ListBox Grid.Column="1" x:Name="UserItems" Margin="8,0,0,0"/></Grid></TabItem>
+      <TabItem Header="Audit"><Grid Margin="8" RowDefinitions="Auto,*"><TextBlock x:Name="AuditIntegrityText" FontWeight="Bold" Margin="0,0,0,8"/><ListBox Grid.Row="1" x:Name="AuditItems"/></Grid></TabItem>
+    </TabControl>
+  </Grid>
+</Window>

@@ -1,0 +1,21 @@
+{
+  "pass": 27,
+  "qualification": "production-deployment-security-runtime",
+  "status": "PASS",
+  "postgresql": "real disposable PostgreSQL supplied by operator",
+  "checks": [
+    "production fail-closed auth/MFA/plaintext-secret/reverse-proxy checks",
+    "external config loading",
+    "secret://file PostgreSQL connection",
+    "trusted forwarded-proto HTTPS enforcement",
+    "direct Kestrel TLS with certificate-age/permission validation",
+    "sanitized anonymous readiness and protected admin status",
+    "TLS private-file permission rejection",
+    "security headers and HSTS",
+    "Kestrel Server header suppressed",
+    "global fixed-window rate limit",
+    "systemd unit verification"
+  ],
+  "port": 5297,
+  "completedAtUtc": "2026-08-21T21:50:01.039639+00:00"
+}

@@ -1,0 +1,216 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:DISRoute.CAD"
+        xmlns:contracts="clr-namespace:DISRoute.Contracts.Operational;assembly=DISRoute.Contracts"
+        x:Class="DISRoute.CAD.MainWindow" Title="DISRoute CAD" Width="1720" Height="1000" Background="#101317">
+  <Grid RowDefinitions="Auto,Auto,*,Auto">
+    <Border Grid.Row="0" Background="#1B2027" BorderBrush="#39414B" BorderThickness="0,0,0,1" Padding="10">
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="12"><TextBlock Text="DISRoute" FontSize="22" FontWeight="Bold"/><TextBlock Text="CAD / DISPATCH" Foreground="#AAB4C0" VerticalAlignment="Center"/></StackPanel>
+        <TextBlock Grid.Column="1" x:Name="ConnectionText" Text="Connecting…" Margin="22,0" VerticalAlignment="Center"/>
+        <TextBox Grid.Column="2" x:Name="SearchBox" Width="260" PlaceholderText="Search incidents" KeyUp="SearchKeyUp"/>
+        <Button Grid.Column="3" Content="Refresh" Margin="8,0,0,0" Click="RefreshClicked"/>
+        <Button Grid.Column="4" Content="Operations Center" Margin="8,0,0,0" IsEnabled="False" ToolTip.Tip="Launch separately: DISRoute.OperationsCenter"/>
+      </Grid>
+    </Border>
+
+    <Border Grid.Row="1" Margin="8" Padding="8" Background="#181D23" BorderBrush="#39414B" BorderThickness="1">
+      <Grid ColumnDefinitions="1.05*,1.15*,.62*,.85*,.8*,.9*,Auto,Auto" ColumnSpacing="8">
+        <TextBox x:Name="NatureBox" PlaceholderText="Nature / call type"/>
+        <TextBox Grid.Column="1" x:Name="AddressBox" PlaceholderText="Address / location"/>
+        <ComboBox Grid.Column="2" x:Name="PriorityCombo" SelectedIndex="0"><ComboBoxItem Content="Emergency"/><ComboBoxItem Content="Routine"/><ComboBoxItem Content="Low"/></ComboBox>
+        <TextBox Grid.Column="3" x:Name="CallerBox" PlaceholderText="Caller name"/>
+        <TextBox Grid.Column="4" x:Name="CallerPhoneBox" PlaceholderText="Callback number"/>
+        <ComboBox Grid.Column="5" x:Name="StationCombo">
+          <ComboBox.ItemTemplate><DataTemplate x:DataType="local:StationRow"><TextBlock Text="{Binding Display}"/></DataTemplate></ComboBox.ItemTemplate>
+        </ComboBox>
+        <Button Grid.Column="6" Content="CHECK DUPES" Click="CheckDuplicatesClicked"/>
+        <Button Grid.Column="7" Content="CREATE CALL" FontWeight="Bold" Click="CreateIncidentClicked"/>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="2" Margin="8,0" ColumnDefinitions="1.1*,1.65*,1.25*" ColumnSpacing="8">
+      <Border Grid.Column="0" Background="#151A20" BorderBrush="#39414B" BorderThickness="1" Padding="8">
+        <Grid RowDefinitions="Auto,*,Auto">
+          <TextBlock Text="ACTIVE INCIDENTS" FontWeight="Bold" FontSize="16"/>
+          <ListBox Grid.Row="1" x:Name="IncidentList" Margin="0,8,0,0" SelectionChanged="IncidentSelectionChanged">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="contracts:IncidentDto">
+                <Border Padding="7" BorderBrush="#303843" BorderThickness="0,0,0,1">
+                  <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,*">
+                    <TextBlock Text="{Binding Priority}" FontWeight="Bold" Foreground="#FFB2B2"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Number}" HorizontalAlignment="Right" Foreground="#AAB4C0"/>
+                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Nature}" FontSize="16" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Address}" Foreground="#CBD3DC"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <TextBlock Grid.Row="2" x:Name="DuplicateText" Margin="0,8,0,0" Foreground="#F4C86A" TextWrapping="Wrap"/>
+        </Grid>
+      </Border>
+
+      <Border Grid.Column="1" Background="#151A20" BorderBrush="#39414B" BorderThickness="1" Padding="8">
+        <Grid RowDefinitions="Auto,Auto,*,Auto,Auto,Auto">
+          <Grid ColumnDefinitions="*,Auto"><TextBlock x:Name="IncidentHeader" Text="Select an incident" FontSize="21" FontWeight="Bold"/><TextBlock Grid.Column="1" x:Name="IncidentStatus" FontWeight="Bold" Foreground="#F4C86A"/></Grid>
+          <TextBlock Grid.Row="1" x:Name="IncidentDetail" Margin="0,4,0,8" Foreground="#CBD3DC" TextWrapping="Wrap"/>
+          <ListBox Grid.Row="2" x:Name="ActivityList">
+            <ListBox.ItemTemplate><DataTemplate x:DataType="local:ActivityRow"><Grid ColumnDefinitions="90,100,*" Margin="0,2"><TextBlock Text="{Binding Time}" Foreground="#8FA1B5"/><TextBlock Grid.Column="1" Text="{Binding Category}" FontWeight="Bold"/><TextBlock Grid.Column="2" Text="{Binding Message}" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate>
+          </ListBox>
+          <Border Grid.Row="3" Margin="0,6,0,0" BorderBrush="#303843" BorderThickness="1" Padding="6">
+            <Grid RowDefinitions="Auto,100,Auto,Auto">
+              <Grid ColumnDefinitions="*,Auto"><TextBlock Text="SHARED INCIDENT NARRATIVE" FontWeight="Bold"/><TextBlock Grid.Column="1" x:Name="SharedNarrativeVersionText" Foreground="#8FA1B5"/></Grid>
+              <TextBox Grid.Row="1" x:Name="SharedNarrativeBox" AcceptsReturn="True" TextWrapping="Wrap" PlaceholderText="Collaborative narrative shared between dispatchers"/>
+              <TextBlock Grid.Row="2" x:Name="SharedNarrativeConflictText" Foreground="#F4C86A" TextWrapping="Wrap"/>
+              <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,6,0,0">
+                <Button Content="Reload Latest (discard local)" Click="ReloadSharedNarrativeClicked"/>
+                <Button Content="Save Shared Narrative" FontWeight="Bold" Click="SaveSharedNarrativeClicked"/>
+              </StackPanel>
+            </Grid>
+          </Border>
+          <Grid Grid.Row="4" ColumnDefinitions="*,Auto" Margin="0,6,0,0"><TextBox x:Name="NarrativeBox" PlaceholderText="Append immutable operational note"/><Button Grid.Column="1" Content="Add Narrative" Margin="8,0,0,0" Click="AddNarrativeClicked"/></Grid>
+          <StackPanel Grid.Row="5" Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+            <Button Content="DISPATCH COMMIT" FontWeight="Bold" Click="DispatchClicked"/>
+            <Button Content="Close" Click="CloseClicked"/>
+            <Button Content="Reopen" Click="ReopenClicked"/>
+            <Button Content="Mayday" Click="MaydayClicked"/>
+            <Button Content="Replay…" Click="ReplayClicked"/>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <Border Grid.Column="2" Background="#151A20" BorderBrush="#39414B" BorderThickness="1" Padding="8">
+        <Grid RowDefinitions="Auto,*,Auto,Auto,280">
+          <Grid ColumnDefinitions="*,Auto"><TextBlock Text="RESOURCE BOARD" FontWeight="Bold" FontSize="16"/><TextBlock Grid.Column="1" x:Name="UnitCountText" Foreground="#AAB4C0"/></Grid>
+          <ListBox Grid.Row="1" x:Name="UnitList" Margin="0,8,0,0" SelectionMode="Multiple">
+            <ListBox.ItemTemplate><DataTemplate x:DataType="local:UnitRow"><Grid ColumnDefinitions="70,100,*,Auto" Margin="0,3"><TextBlock Text="{Binding CallSign}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Status}"/><TextBlock Grid.Column="2" Text="{Binding UnitType}"/><TextBlock Grid.Column="3" Text="{Binding Assignment}" Foreground="#AAB4C0"/></Grid></DataTemplate></ListBox.ItemTemplate>
+          </ListBox>
+          <Button Grid.Row="2" Content="Assign Selected Unit(s) → Selected Incident" Margin="0,8,0,0" Click="AssignClicked"/>
+          <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="0,8,0,0"><ComboBox x:Name="UnitStatusCombo" SelectedIndex="0"><ComboBoxItem Content="Available"/><ComboBoxItem Content="Assigned"/><ComboBoxItem Content="EnRoute"/><ComboBoxItem Content="OnScene"/><ComboBoxItem Content="Transporting"/><ComboBoxItem Content="AtHospital"/><ComboBoxItem Content="Clearing"/><ComboBoxItem Content="Command"/><ComboBoxItem Content="Training"/><ComboBoxItem Content="FireWatch"/><ComboBoxItem Content="OffDuty"/><ComboBoxItem Content="Code55"/><ComboBoxItem Content="OutOfService"/></ComboBox><Button Grid.Column="1" Content="Set Status" Margin="8,0,0,0" Click="SetStatusClicked"/></Grid>
+          <TabControl Grid.Row="4" Margin="0,8,0,0">
+            <TabItem Header="RESPONSE">
+              <Grid RowDefinitions="Auto,*,Auto" Margin="6">
+                <Button Content="Refresh Recommendation" HorizontalAlignment="Left" Click="RecommendClicked"/>
+                <ListBox Grid.Row="1" x:Name="RecommendationList" Margin="0,6,0,0">
+                  <ListBox.ItemTemplate><DataTemplate x:DataType="local:RecommendationRow"><Grid ColumnDefinitions="70,90,50,*" Margin="0,2"><TextBlock Text="{Binding CallSign}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding UnitType}"/><TextBlock Grid.Column="2" Text="{Binding Score}"/><TextBlock Grid.Column="3" Text="{Binding Reasons}" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock Grid.Row="2" x:Name="RecommendationWarningsText" Foreground="#F4C86A" TextWrapping="Wrap"/>
+              </Grid>
+            </TabItem>
+            <TabItem Header="DISPATCH">
+              <Grid RowDefinitions="*,Auto,Auto" Margin="6">
+                <ListBox x:Name="DispatchActionList">
+                  <ListBox.ItemTemplate><DataTemplate x:DataType="local:DispatchActionRow"><Grid ColumnDefinitions="75,90,*,Auto" Margin="0,2"><TextBlock Text="{Binding State}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Time}"/><TextBlock Grid.Column="2" Text="{Binding Units}" TextWrapping="Wrap"/><TextBlock Grid.Column="3" Text="{Binding Alarm}" Foreground="#AAB4C0"/></Grid></DataTemplate></ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock Grid.Row="1" x:Name="DispatchInfoText" Foreground="#AAB4C0" TextWrapping="Wrap"/>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" Margin="0,6,0,0"><Button Content="Additional Alarm (selected units)" Click="AdditionalAlarmClicked"/><Button Content="Cancel Selected Dispatch" Click="CancelDispatchClicked"/></StackPanel>
+              </Grid>
+            </TabItem>
+            <TabItem Header="SITE INTEL">
+              <Grid RowDefinitions="Auto,*" Margin="6" RowSpacing="5">
+                <TextBlock x:Name="SiteIntelligenceSummaryText" Foreground="#F4C86A" TextWrapping="Wrap"/>
+                <TabControl Grid.Row="1">
+                  <TabItem Header="PREPLAN / WATER">
+                    <Grid RowDefinitions="78,Auto,*" Margin="4" RowSpacing="4">
+                      <Grid ColumnDefinitions="1.05*,1.35*" ColumnSpacing="6">
+                        <ListBox x:Name="PremiseList">
+                          <ListBox.ItemTemplate><DataTemplate x:DataType="local:PremiseRow"><Grid RowDefinitions="Auto,Auto"><TextBlock Text="{Binding NameAddress}" FontWeight="Bold" TextWrapping="Wrap"/><TextBlock Grid.Row="1" Text="{Binding Detail}" Foreground="#AAB4C0" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate>
+                        </ListBox>
+                        <ListBox Grid.Column="1" x:Name="PreplanList">
+                          <ListBox.ItemTemplate><DataTemplate x:DataType="local:PreplanRow"><Grid RowDefinitions="Auto,Auto"><TextBlock Text="{Binding Header}" FontWeight="Bold"/><TextBlock Grid.Row="1" Text="{Binding Content}" Foreground="#CBD3DC" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate>
+                        </ListBox>
+                      </Grid>
+                      <Grid Grid.Row="1" ColumnDefinitions="Auto,140,*" ColumnSpacing="6"><TextBlock Text="CRG floor" VerticalAlignment="Center"/><ComboBox Grid.Column="1" x:Name="CrgFloorCombo" SelectionChanged="CrgFloorSelectionChanged"/><TextBlock Grid.Column="2" Text="TIFF/CRG metadata shown exactly as registered; asset rendering depends on the configured content provider." Foreground="#8FA1B5" TextWrapping="Wrap"/></Grid>
+                      <Grid Grid.Row="2" ColumnDefinitions="1.15*,1*" ColumnSpacing="6">
+                        <ListBox x:Name="CrgList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:CrgRow"><Grid RowDefinitions="Auto,Auto" Margin="0,1"><TextBlock Text="{Binding Header}" FontWeight="Bold"/><TextBlock Grid.Row="1" Text="{Binding Meta}" Foreground="#AAB4C0" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                        <ListBox Grid.Column="1" x:Name="HydrantList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:HydrantRow"><Grid RowDefinitions="Auto,Auto" Margin="0,1"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="{Binding Asset}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Distance}"/></Grid><TextBlock Grid.Row="1" Text="{Binding Detail}" Foreground="#AAB4C0" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                      </Grid>
+                    </Grid>
+                  </TabItem>
+                  <TabItem Header="MAP / ROADS">
+                    <Grid RowDefinitions="*,Auto,Auto" Margin="4" RowSpacing="4">
+                      <Grid ColumnDefinitions="1*,1*" ColumnSpacing="6">
+                        <ListBox x:Name="MapObjectList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:MapObjectRow"><Grid RowDefinitions="Auto,Auto" Margin="0,1"><TextBlock Text="{Binding Header}" FontWeight="Bold"/><TextBlock Grid.Row="1" Text="{Binding Geometry}" Foreground="#AAB4C0" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                        <ListBox Grid.Column="1" x:Name="RoadRestrictionList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:RoadRestrictionRow"><Grid RowDefinitions="Auto,Auto" Margin="0,1"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="{Binding Name}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Distance}"/></Grid><TextBlock Grid.Row="1" Text="{Binding Detail}" Foreground="#AAB4C0" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                      </Grid>
+                      <Grid Grid.Row="1" ColumnDefinitions=".7*,1.1*,70,80,80,Auto" ColumnSpacing="4"><TextBox x:Name="MapKindBox" Text="IncidentLocation" PlaceholderText="Map kind"/><TextBox Grid.Column="1" x:Name="MapNameBox" Text="Incident scene" PlaceholderText="Map object name"/><TextBox Grid.Column="2" x:Name="MapLatitudeBox" PlaceholderText="Lat"/><TextBox Grid.Column="3" x:Name="MapLongitudeBox" PlaceholderText="Lon"/><TextBox Grid.Column="4" x:Name="MapDurationBox" Text="240" PlaceholderText="Minutes"/><Button Grid.Column="5" Content="Add Point" Click="CreateMapPointClicked"/></Grid>
+                      <Grid Grid.Row="2" ColumnDefinitions=".8*,1.1*,70,80,70,65,Auto,Auto" ColumnSpacing="4"><TextBox x:Name="RoadNameBox" PlaceholderText="Road restriction"/><TextBox Grid.Column="1" x:Name="RoadDescriptionBox" PlaceholderText="Description"/><TextBox Grid.Column="2" x:Name="RoadLatitudeBox" PlaceholderText="Lat"/><TextBox Grid.Column="3" x:Name="RoadLongitudeBox" PlaceholderText="Lon"/><TextBox Grid.Column="4" x:Name="RoadRadiusBox" Text="75" PlaceholderText="m"/><TextBox Grid.Column="5" x:Name="RoadDurationBox" Text="120" PlaceholderText="min"/><Button Grid.Column="6" Content="Create" Click="CreateRoadRestrictionClicked"/><Button Grid.Column="7" Content="End Selected" Click="EndRoadRestrictionClicked"/></Grid>
+                    </Grid>
+                  </TabItem>
+                </TabControl>
+              </Grid>
+            </TabItem>
+            <TabItem Header="INCIDENT MGMT">
+              <TabControl Margin="6">
+                <TabItem Header="CORRECT">
+                  <Grid RowDefinitions="*,Auto,Auto" Margin="4" RowSpacing="5">
+                    <ListBox x:Name="CorrectionList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:CorrectionRow"><Grid RowDefinitions="Auto,Auto" Margin="0,2"><Grid ColumnDefinitions="95,*,Auto"><TextBlock Text="{Binding Field}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Change}" TextWrapping="Wrap"/><TextBlock Grid.Column="2" Text="{Binding Time}" Foreground="#8FA1B5"/></Grid><TextBlock Grid.Row="1" Text="{Binding Reason}" Foreground="#AAB4C0" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                    <Grid Grid.Row="1" ColumnDefinitions="130,*" ColumnSpacing="5"><ComboBox x:Name="CorrectionFieldCombo" SelectedIndex="0"><ComboBoxItem Content="Nature"/><ComboBoxItem Content="Priority"/><ComboBoxItem Content="Address"/><ComboBoxItem Content="CrossStreets"/><ComboBoxItem Content="Municipality"/><ComboBoxItem Content="CallerName"/><ComboBoxItem Content="CallerPhone"/><ComboBoxItem Content="Notes"/></ComboBox><TextBox Grid.Column="1" x:Name="CorrectionValueBox" PlaceholderText="Corrected value"/></Grid>
+                    <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="5"><TextBox x:Name="CorrectionReasonBox" PlaceholderText="Required correction reason"/><Button Grid.Column="1" Content="Apply Audited Correction" FontWeight="Bold" Click="CorrectIncidentClicked"/></Grid>
+                  </Grid>
+                </TabItem>
+                <TabItem Header="RELATE / MERGE">
+                  <Grid RowDefinitions="*,Auto,Auto" Margin="4" RowSpacing="5">
+                    <ListBox x:Name="RelationshipList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:RelationshipRow"><Grid ColumnDefinitions="100,*,80" Margin="0,2"><TextBlock Text="{Binding Type}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding OtherIncident}" TextWrapping="Wrap"/><TextBlock Grid.Column="2" Text="{Binding Direction}" Foreground="#AAB4C0"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                    <Grid Grid.Row="1" ColumnDefinitions="1.5*,130,Auto" ColumnSpacing="5"><ComboBox x:Name="RelatedIncidentCombo"><ComboBox.ItemTemplate><DataTemplate x:DataType="local:IncidentTargetRow"><TextBlock Text="{Binding Display}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox><ComboBox Grid.Column="1" x:Name="RelationshipTypeCombo" SelectedIndex="0"><ComboBoxItem Content="Related"/><ComboBoxItem Content="Duplicate"/><ComboBoxItem Content="Rekindle"/><ComboBoxItem Content="Transfer"/><ComboBoxItem Content="MutualAid"/></ComboBox><Button Grid.Column="2" Content="Add Relationship" Click="AddRelationshipClicked"/></Grid>
+                    <Grid Grid.Row="2" ColumnDefinitions="1.25*,1*,1*,Auto" ColumnSpacing="5"><ComboBox x:Name="MergeTargetCombo"><ComboBox.ItemTemplate><DataTemplate x:DataType="local:IncidentTargetRow"><TextBlock Text="{Binding Display}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox><TextBox Grid.Column="1" x:Name="MergeReasonBox" PlaceholderText="Merge reason"/><TextBox Grid.Column="2" x:Name="MergeConfirmationBox" PlaceholderText="Type source incident number to confirm"/><Button Grid.Column="3" Content="Merge Source → Target" Click="MergeIncidentClicked"/></Grid>
+                  </Grid>
+                </TabItem>
+                <TabItem Header="SPLIT">
+                  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="4" RowSpacing="5">
+                    <TextBlock Text="Create a new incident linked to the selected source. The source remains open and its historical record is preserved." Foreground="#AAB4C0" TextWrapping="Wrap"/>
+                    <Grid Grid.Row="1" ColumnDefinitions="1.2*,110,1.5*" ColumnSpacing="5"><TextBox x:Name="SplitNatureBox" PlaceholderText="New incident nature"/><ComboBox Grid.Column="1" x:Name="SplitPriorityCombo" SelectedIndex="0"><ComboBoxItem Content="Emergency"/><ComboBoxItem Content="Routine"/><ComboBoxItem Content="Low"/></ComboBox><TextBox Grid.Column="2" x:Name="SplitAddressBox" PlaceholderText="New incident address"/></Grid>
+                    <TextBox Grid.Row="2" x:Name="SplitNotesBox" AcceptsReturn="True" TextWrapping="Wrap" PlaceholderText="Reason / notes describing what was split into the new incident"/>
+                    <Button Grid.Row="3" Content="Create Split Incident" HorizontalAlignment="Left" FontWeight="Bold" Click="SplitIncidentClicked"/>
+                  </Grid>
+                </TabItem>
+              </TabControl>
+            </TabItem>
+            <TabItem Header="FIRE WATCH">
+              <Grid RowDefinitions="*,Auto,Auto" Margin="6">
+                <ListBox x:Name="FireWatchList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:FireWatchRow"><Grid ColumnDefinitions="75,90,*" Margin="0,2"><TextBlock Text="{Binding Unit}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Status}"/><TextBlock Grid.Column="2" Text="{Binding Detail}" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                <TextBox Grid.Row="1" x:Name="FireWatchNotesBox" PlaceholderText="Supervisor / check notes" Margin="0,6,0,0"/>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" Margin="0,6,0,0"><Button Content="Start (selected unit)" Click="StartFireWatchClicked"/><Button Content="Log Check" Click="FireWatchCheckClicked"/><Button Content="End" Click="EndFireWatchClicked"/></StackPanel>
+              </Grid>
+            </TabItem>
+            <TabItem Header="RELOCATE">
+              <Grid RowDefinitions="*,Auto,Auto" Margin="6">
+                <ListBox x:Name="RelocationList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:RelocationRow"><Grid ColumnDefinitions="70,90,90,*" Margin="0,2"><TextBlock Text="{Binding Unit}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Destination}"/><TextBlock Grid.Column="2" Text="{Binding Status}"/><TextBlock Grid.Column="3" Text="{Binding Reason}" TextWrapping="Wrap"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                <Grid Grid.Row="1" ColumnDefinitions=".8*,1.2*" ColumnSpacing="6" Margin="0,6,0,0"><ComboBox x:Name="DestinationStationCombo"><ComboBox.ItemTemplate><DataTemplate x:DataType="local:StationRow"><TextBlock Text="{Binding Display}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox><TextBox Grid.Column="1" x:Name="RelocationReasonBox" PlaceholderText="Relocation reason"/></Grid>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" Margin="0,6,0,0"><Button Content="Start (selected unit)" Click="StartRelocationClicked"/><Button Content="End Selected Relocation" Click="EndRelocationClicked"/></StackPanel>
+              </Grid>
+            </TabItem>
+            <TabItem Header="COMMAND">
+              <Grid RowDefinitions="Auto,55,Auto,55,Auto,55" Margin="6" RowSpacing="4">
+                <Grid ColumnDefinitions="1.1*,1*,Auto" ColumnSpacing="4"><TextBox x:Name="CommandNameBox" PlaceholderText="Command role"/><TextBox Grid.Column="1" x:Name="CommandPersonBox" PlaceholderText="Person"/><Button Grid.Column="2" Content="Set" Click="SetCommandClicked"/></Grid>
+                <ListBox Grid.Row="1" x:Name="CommandList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:CommandRow"><Grid ColumnDefinitions="110,80,*" Margin="0,1"><TextBlock Text="{Binding Name}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Unit}"/><TextBlock Grid.Column="2" Text="{Binding Person}"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                <Grid Grid.Row="2" ColumnDefinitions="1.05*,.7*,.7*,1.2*,Auto" ColumnSpacing="4"><TextBox x:Name="GroupNameBox" PlaceholderText="Group/division"/><TextBox Grid.Column="1" x:Name="GroupTypeBox" PlaceholderText="Type"/><TextBox Grid.Column="2" x:Name="GroupLeaderBox" PlaceholderText="Leader user ID/name"/><TextBox Grid.Column="3" x:Name="GroupMembersBox" PlaceholderText="Member user IDs (comma separated)"/><Button Grid.Column="4" Content="Add" Click="CreateGroupClicked"/></Grid>
+                <ListBox Grid.Row="3" x:Name="GroupList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:GroupRow"><Grid ColumnDefinitions="100,80,*,70" Margin="0,1"><TextBlock Text="{Binding Name}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Type}"/><TextBlock Grid.Column="2" Text="{Binding Leader}"/><TextBlock Grid.Column="3" Text="{Binding Status}"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                <Grid Grid.Row="4" ColumnDefinitions="1.05*,.8*,45,Auto,.8*,Auto" ColumnSpacing="4"><TextBox x:Name="MutualAidAgencyBox" PlaceholderText="Aid agency"/><TextBox Grid.Column="1" x:Name="MutualAidResourceBox" PlaceholderText="Resource"/><TextBox Grid.Column="2" x:Name="MutualAidQuantityBox" Text="1"/><Button Grid.Column="3" Content="Request" Click="CreateMutualAidClicked"/><ComboBox Grid.Column="4" x:Name="MutualAidStateCombo" SelectedIndex="0"><ComboBoxItem Content="Accepted"/><ComboBoxItem Content="EnRoute"/><ComboBoxItem Content="Arrived"/><ComboBoxItem Content="Declined"/><ComboBoxItem Content="Canceled"/><ComboBoxItem Content="Completed"/></ComboBox><Button Grid.Column="5" Content="Update" Click="UpdateMutualAidClicked"/></Grid>
+                <ListBox Grid.Row="5" x:Name="MutualAidList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:MutualAidRow"><Grid ColumnDefinitions="110,90,40,80,*" Margin="0,1"><TextBlock Text="{Binding Agency}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Resource}"/><TextBlock Grid.Column="2" Text="{Binding Quantity}"/><TextBlock Grid.Column="3" Text="{Binding State}"/><TextBlock Grid.Column="4" Text="{Binding RequestedBy}"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+              </Grid>
+            </TabItem>
+            <TabItem Header="MESSAGES">
+              <Grid RowDefinitions="*,Auto,Auto,Auto" Margin="6" RowSpacing="5">
+                <ListBox x:Name="OperationalMessageList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:OperationalMessageRow"><Grid RowDefinitions="Auto,Auto" ColumnDefinitions="85,90,*" Margin="0,2"><TextBlock Text="{Binding Time}" Foreground="#8FA1B5"/><TextBlock Grid.Column="1" Text="{Binding Sender}" FontWeight="Bold"/><TextBlock Grid.Column="2" Text="{Binding Body}" TextWrapping="Wrap"/><TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Meta}" Foreground="#AAB4C0"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                <Grid Grid.Row="1" ColumnDefinitions=".8*,1*,.8*" ColumnSpacing="4"><TextBox x:Name="MessageChannelBox" Text="Command" PlaceholderText="Channel"/><TextBox Grid.Column="1" x:Name="MessageRecipientBox" PlaceholderText="Recipient (optional)"/><ComboBox Grid.Column="2" x:Name="MessagePriorityCombo" SelectedIndex="0"><ComboBoxItem Content="Routine"/><ComboBoxItem Content="Urgent"/><ComboBoxItem Content="Critical"/></ComboBox></Grid>
+                <TextBox Grid.Row="2" x:Name="MessageBodyBox" PlaceholderText="Operational message"/>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8"><Button Content="Send" FontWeight="Bold" Click="SendOperationalMessageClicked"/><Button Content="Promote Selected → Narrative" Click="PromoteMessageClicked"/></StackPanel>
+              </Grid>
+            </TabItem>
+            <TabItem Header="ALERTS">
+              <Grid RowDefinitions="*,Auto" Margin="6">
+                <ListBox x:Name="AlertList"><ListBox.ItemTemplate><DataTemplate x:DataType="local:AlertRow"><Grid RowDefinitions="Auto,Auto" ColumnDefinitions="110,*" Margin="0,2"><TextBlock Text="{Binding SeverityState}" FontWeight="Bold"/><TextBlock Grid.Column="1" Text="{Binding Summary}" TextWrapping="Wrap"/><TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Claimed}" Foreground="#AAB4C0"/></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,6,0,0"><Button Content="Acknowledge" Click="AcknowledgeAlertClicked"/><Button Content="Claim" Click="ClaimAlertClicked"/><Button Content="Escalate" Click="EscalateAlertClicked"/><Button Content="Resolve" Click="ResolveAlertClicked"/></StackPanel>
+              </Grid>
+            </TabItem>
+          </TabControl>
+        </Grid>
+      </Border>
+    </Grid>
+
+    <Border Grid.Row="3" Margin="8" Padding="7" Background="#1B2027" BorderBrush="#39414B" BorderThickness="1">
+      <Grid ColumnDefinitions="*,Auto"><TextBlock x:Name="ActionText" Text="Ready."/><TextBlock Grid.Column="1" x:Name="ClockText"/></Grid>
+    </Border>
+  </Grid>
+</Window>

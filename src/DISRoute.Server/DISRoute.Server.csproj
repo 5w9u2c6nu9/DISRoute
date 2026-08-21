@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="System.DirectoryServices.Protocols" />
+    <ProjectReference Include="../DISRoute.Application/DISRoute.Application.csproj" />
+    <ProjectReference Include="../DISRoute.Contracts/DISRoute.Contracts.csproj" />
+    <ProjectReference Include="../DISRoute.Security/DISRoute.Security.csproj" />
+    <ProjectReference Include="../DISRoute.Data/DISRoute.Data.csproj" />
+    <ProjectReference Include="../DISRoute.Integrations/DISRoute.Integrations.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../db/migrations/*.sql" Link="db/migrations/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

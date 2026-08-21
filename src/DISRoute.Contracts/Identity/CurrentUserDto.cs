@@ -1,0 +1,1 @@
+namespace DISRoute.Contracts.Identity; public sealed record CurrentUserDto(string Name,bool Authenticated,IReadOnlyList<string> Roles,IReadOnlyList<string> Permissions);

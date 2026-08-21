@@ -1,0 +1,93 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:DISRoute.Station"
+        x:Class="DISRoute.Station.MainWindow" Title="DISRoute Station" Width="1580" Height="940" Background="#101317">
+  <Grid RowDefinitions="Auto,*,Auto" Margin="10">
+    <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+      <TextBlock Text="DISRoute STATION" FontSize="23" FontWeight="Bold"/>
+      <TextBlock Grid.Column="1" x:Name="StationTitle" Margin="20,0" VerticalAlignment="Center"/>
+      <TextBlock Grid.Column="2" x:Name="ConnectionText" VerticalAlignment="Center" Margin="12,0"/>
+      <Button Grid.Column="3" Content="Refresh" Click="RefreshClicked"/>
+    </Grid>
+    <TabControl Grid.Row="1" Margin="0,10">
+      <TabItem Header="Current Calls">
+        <Grid Margin="8" ColumnDefinitions="1.05*,1.45*">
+          <Grid RowDefinitions="Auto,*">
+            <TextBlock Text="OPEN INCIDENTS" FontWeight="Bold" FontSize="16" Margin="0,0,0,6"/>
+            <ListBox Grid.Row="1" x:Name="IncidentList" SelectionChanged="IncidentSelectionChanged">
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="local:IncidentRow">
+                  <StackPanel Margin="4">
+                    <TextBlock Text="{Binding Header}" FontSize="18" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Address}"/>
+                    <TextBlock Text="{Binding Detail}" Foreground="#AAB4C0" TextWrapping="Wrap"/>
+                  </StackPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </Grid>
+          <ScrollViewer Grid.Column="1" Margin="12,0,0,0">
+            <StackPanel Spacing="8">
+              <TextBlock Text="INCIDENT / RUN-SHEET WORKFLOW" FontSize="18" FontWeight="Bold"/>
+              <Border BorderBrush="#39414A" BorderThickness="1" Padding="8">
+                <TextBlock x:Name="IncidentSummaryText" Text="Select an incident." TextWrapping="Wrap"/>
+              </Border>
+
+              <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+                <TextBlock Text="Station delivery" FontSize="17" FontWeight="Bold"/>
+                <Button Grid.Column="1" Content="Acknowledge Selected" Click="AcknowledgeClicked"/>
+              </Grid>
+              <ListBox x:Name="DeliveryList" MaxHeight="150" SelectionChanged="DeliverySelectionChanged">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="local:DeliveryRow">
+                    <StackPanel Margin="3">
+                      <TextBlock Text="{Binding Display}" TextWrapping="Wrap"/>
+                      <TextBlock Text="{Binding StateSummary}" Foreground="#AAB4C0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+
+              <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,0">
+                <TextBlock Text="Delivery paths / failure recovery" FontSize="17" FontWeight="Bold"/>
+                <Button Grid.Column="1" Content="Retry Selected Failed Path" Click="RetryDeliveryClicked"/>
+              </Grid>
+              <ListBox x:Name="DeliveryPathList" MaxHeight="170">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="local:DeliveryPathRow">
+                    <StackPanel Margin="3">
+                      <TextBlock Text="{Binding Header}" FontWeight="Bold"/>
+                      <TextBlock Text="{Binding Detail}" Foreground="#AAB4C0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+
+              <TextBlock Text="Run sheets" FontSize="17" FontWeight="Bold" Margin="0,5,0,0"/>
+              <ListBox x:Name="RunSheetList" MaxHeight="130" SelectionChanged="RunSheetSelectionChanged">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="local:RunSheetRow">
+                    <TextBlock Text="{Binding Display}" TextWrapping="Wrap" Margin="3"/>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+              <Grid ColumnDefinitions="Auto,160,Auto,Auto,*" ColumnSpacing="8">
+                <TextBlock Text="Printer key" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="1" x:Name="PrinterKeyText" Text="default"/>
+                <Button Grid.Column="2" Content="Print Selected" Click="PrintRunSheetClicked"/>
+                <Button Grid.Column="3" Content="Mark Printed (Manual)" Click="MarkPrintedClicked"/>
+                <TextBlock Grid.Column="4" x:Name="PrintResultText" VerticalAlignment="Center" TextWrapping="Wrap"/>
+              </Grid>
+              <TextBlock Text="Selected run-sheet content" FontWeight="Bold"/>
+              <TextBox x:Name="RunSheetContentText" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="180"/>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </TabItem>
+      <TabItem Header="Units"><ListBox Margin="8" x:Name="UnitList"/></TabItem>
+      <TabItem Header="Premise / Preplans"><Grid Margin="8" ColumnDefinitions="*,*"><ListBox x:Name="PreplanList"/><ListBox Grid.Column="1" x:Name="CrgList" Margin="12,0,0,0"/></Grid></TabItem>
+      <TabItem Header="Cameras"><ListBox Margin="8" x:Name="CameraList"/></TabItem>
+      <TabItem Header="Radio"><ListBox Margin="8" x:Name="RadioList"/></TabItem>
+    </TabControl>
+    <Grid Grid.Row="2" ColumnDefinitions="*,Auto"><TextBlock x:Name="ActionText"/><TextBlock Grid.Column="1" x:Name="ClockText"/></Grid>
+  </Grid>
+</Window>

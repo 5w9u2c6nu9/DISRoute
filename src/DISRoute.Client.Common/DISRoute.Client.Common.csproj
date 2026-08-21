@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../DISRoute.Contracts/DISRoute.Contracts.csproj" />
+  </ItemGroup>
+</Project>
