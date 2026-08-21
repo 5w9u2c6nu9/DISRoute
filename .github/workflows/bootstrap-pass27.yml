@@ -1,0 +1,35 @@
+name: Bootstrap Pass 27 source
+
+on:
+  push:
+    paths:
+      - 'bootstrap/pass27.zip.b64'
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Expand authoritative Pass 27 checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d bootstrap/pass27.zip.b64 > /tmp/disroute-pass27.zip
+          rm -rf bootstrap
+          unzip -oq /tmp/disroute-pass27.zip -d .
+          rm -f .github/workflows/bootstrap-pass27.yml
+
+      - name: Commit authoritative Pass 27 tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "DISRoute Bootstrap"
+          git config user.email "disroute-bootstrap@users.noreply.github.com"
+          git add -A
+          git commit -m "Establish authoritative DISRoute Pass 27 baseline"
+          git push origin HEAD:main
