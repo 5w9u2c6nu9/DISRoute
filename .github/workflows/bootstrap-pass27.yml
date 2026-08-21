@@ -15,23 +15,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Reassemble and verify authoritative Pass 27 checkpoint
+      - name: Reassemble and verify authoritative Pass 27 transport
         shell: bash
         run: |
           set -euo pipefail
-          cat bootstrap/pass27.zip.b64.* | base64 -d > /tmp/disroute-pass27.zip
-          actual="$(sha256sum /tmp/disroute-pass27.zip | awk '{print $1}')"
-          expected="af13be5f8fddcf79c00bb4b6b8f02a9058776d84615e83de0b30b5ed49a8b1fe"
+          cat bootstrap/pass27.tar.xz.b64.* | base64 -d > /tmp/disroute-pass27.tar.xz
+          actual="$(sha256sum /tmp/disroute-pass27.tar.xz | awk '{print $1}')"
+          expected="aa0e4842a1b9e1c4ff5db5f21bce8b93a4ce93a7722fabfbc02227aea46292b5"
           test "$actual" = "$expected"
-          unzip -tq /tmp/disroute-pass27.zip
+          xz -t /tmp/disroute-pass27.tar.xz
 
       - name: Expand authoritative Pass 27 checkpoint
         shell: bash
         run: |
           set -euo pipefail
           rm -rf bootstrap
-          unzip -oq /tmp/disroute-pass27.zip -d .
+          tar -xJf /tmp/disroute-pass27.tar.xz -C .
           rm -f .github/workflows/bootstrap-pass27.yml
+
+      - name: Verify expanded source shape
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(find . -type f -not -path './.git/*' | wc -l)" -eq 281
+          test "$(find src -name '*.cs' -type f | wc -l)" -eq 124
+          test "$(find src -name '*.csproj' -type f | wc -l)" -eq 18
+          test "$(find src/DISRoute.Data/Migrations/PostgreSql -name '*.sql' -type f | wc -l)" -eq 20
 
       - name: Commit authoritative Pass 27 tree
         shell: bash
