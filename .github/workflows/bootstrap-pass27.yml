@@ -3,7 +3,7 @@ name: Bootstrap Pass 27 source
 on:
   push:
     paths:
-      - 'bootstrap/DISRoute-Implementation-Pass-27-2026-08-21.zip'
+      - 'bootstrap/READY'
 
 permissions:
   contents: write
@@ -19,7 +19,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          archive='bootstrap/DISRoute-Implementation-Pass-27-2026-08-21.zip'
+          archive='DISRoute-Implementation-Pass-27-2026-08-21.zip'
           actual="$(sha256sum "$archive" | awk '{print $1}')"
           expected='af13be5f8fddcf79c00bb4b6b8f02a9058776d84615e83de0b30b5ed49a8b1fe'
           test "$actual" = "$expected"
@@ -31,6 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf bootstrap
+          rm -f DISRoute-Implementation-Pass-27-2026-08-21.zip DISRoute-Pass-27-manifest.json DISRoute-Pass-27-SHA256.txt
           unzip -oq /tmp/disroute-pass27.zip -d .
           rm -f .github/workflows/bootstrap-pass27.yml
 
