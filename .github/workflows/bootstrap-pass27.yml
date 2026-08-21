@@ -1,16 +1,13 @@
 name: Bootstrap Pass 27 source
 
 on:
-  issues:
-    types: [opened]
+  workflow_dispatch:
 
 permissions:
   contents: write
-  issues: read
 
 jobs:
   bootstrap:
-    if: github.event.issue.title == 'DISRoute Pass 27 bootstrap trigger'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
