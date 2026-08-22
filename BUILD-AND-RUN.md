@@ -18,7 +18,26 @@ Linux/macOS:
 ./scripts/verify.sh
 ```
 
-The sequence performs the repository structural/branding checks, restores packages, Release-builds all 18 projects in `DISRoute.slnx` with warnings-as-errors, and runs `DISRoute.SelfTest`. The self-test covers incident intake, duplicate detection, response recommendation, assignments, Dispatch Commit, Station delivery/acknowledgement, Fire Watch, premise/preplan/CRG/hydrant, GIS, Mayday, command/groups/mutual aid, Mobile encrypted queue/sync, collaborative narrative, additional alarm/cancellation/AVL/corrections, Workforce rotations/overtime/timesheets/payroll, DMS approval workflow, RMS violation/hazmat/investigation/qualification, canonical RMS report lifecycle, RMS-linked NERIS projection/queue/reconciliation safety, persistence round-trip and audit-chain integrity.
+The sequence performs the repository structural/branding checks, restores packages, Release-builds all 18 projects in `DISRoute.slnx` with warnings-as-errors, and runs `DISRoute.SelfTest`. The self-test covers incident intake, duplicate detection, response recommendation, assignments, Dispatch Commit, Station delivery/acknowledgement, Fire Watch, premise/preplan/CRG/hydrant, GIS, Mayday, command/groups/mutual aid, Mobile encrypted queue/sync, collaborative narrative, additional alarm/cancellation/AVL/corrections, Workforce rotations/overtime/timesheets/payroll, DMS approval workflow, RMS violation/hazmat/investigation/qualification, canonical RMS report lifecycle, RMS-linked NERIS projection/queue/reconciliation safety, persistence round-trip and audit-chain integrity. Pass 28 also locks the production role/permission matrix into SelfTest.
+
+
+### Pass 28 operational end-to-end qualification
+
+After the Release build, run the live cumulative operational scenario suite:
+
+```bash
+./scripts/operational-e2e-qualification.sh
+```
+
+It exercises six combined workflows through the real HTTP API, including a multi-unit active incident across an actual server restart, Mobile offline reconcile/replay, correction/merge/split history, RMS-to-NERIS degradation/recovery and audit/journal closure. See `docs/ops/OPERATIONAL-E2E-QUALIFICATION.md`.
+
+For the same-active-incident application authority-transfer regression on a disposable PostgreSQL database:
+
+```bash
+DISROUTE_HA_TEST_CONNECTION_STRING='Host=127.0.0.1;Port=...;Database=...;Username=...;Password=...' ./scripts/ha-smoke.sh
+```
+
+The Pass 28 HA smoke dispatches one incident before authority transfer, continues and closes that same incident on the promoted application node, verifies the old writer is fenced, and validates the complete pre/post-transfer history after authority cycles again.
 
 ### Linux UI startup smoke
 
@@ -94,4 +113,4 @@ The scripts publish Windows and Linux server targets, Windows CAD/Station/Operat
 
 ## Verification status of this implementation pass
 
-This pass has been restored and Release-built in the implementation environment using the .NET 10 SDK, including all five Avalonia applications, with **0 warnings and 0 errors**. `DISRoute.SelfTest`, the restart/backup/restore runtime smoke, and the Linux/Xvfb Avalonia startup smoke pass. Production certification still requires target Windows/Raspberry Pi hardware, PostgreSQL HA/DR infrastructure, vendor integrations, security/load/accessibility testing and operational acceptance.
+Pass 28 has been restored and Release-built in the implementation environment using the .NET 10 SDK, including all five Avalonia applications, with **0 warnings and 0 errors**. `DISRoute.SelfTest`, the six-scenario operational end-to-end suite, active-incident PostgreSQL application-HA continuity smoke, restart/backup/restore runtime smoke, Pass 25/26 PostgreSQL regressions, Pass 27 production-security regression, all five Linux/Xvfb Avalonia startup smokes and all eight documented publish targets pass. Target Windows/Raspberry Pi hardware, native mobile packaging, live vendor conformance, production load/penetration/accessibility testing and agency acceptance remain external.

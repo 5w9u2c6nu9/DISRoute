@@ -1,8 +1,8 @@
-# Current DISRoute Implementation State — Pass 24
+# Current DISRoute Implementation State — Pass 28
 
 ## Authoritative checkpoint
 
-The current implementation is the cumulative Pass 24 source checkpoint. It contains the full application through all previous passes, not only the integration/gateway changes.
+The current implementation is the cumulative Pass 28 source checkpoint. It contains the full application through all previous passes. Pass 28 adds whole-system operational qualification and continuity regression rather than a new product subsystem.
 
 ## Platform baseline
 
@@ -29,22 +29,31 @@ The current implementation is the cumulative Pass 24 source checkpoint. It conta
 - File-checkpoint runtime persistence, command journal, backup/restore, durable idempotency and PostgreSQL-shaped migrations/projection through schema version 20.
 - HA/DR coordination architecture preserving Dispatch Primary -> Dispatch Local Standby -> HQ DR.
 
-## Pass 24 verification baseline
+## Current Pass 28 verification baseline
 
-- 18-project Release build with warnings-as-errors: PASS.
-- SelfTest: PASS.
-- Source structure verifier: PASS.
+- 18-project Release build with warnings-as-errors: PASS — 0 warnings / 0 errors.
+- SelfTest including least-privilege role matrix: PASS.
+- Source structure verifier: PASS — 124 C# / 18 projects / 313 API routes / 20 migrations.
+- Six-scenario live operational end-to-end qualification: PASS.
+- Active-dispatched-incident application authority-transfer continuity on PostgreSQL: PASS.
 - Process restart / durable idempotency / backup / staged restore / historical replay / RMS / NERIS / Workforce / DMS / Chat / Mobile / integration-gateway runtime smoke: PASS.
+- Pass 25 PostgreSQL application-HA regression and Pass 26 physical-HA/DR/PITR regression: PASS.
+- Pass 27 Production deployment/security regression: PASS.
 - Avalonia startup smoke: CAD, Station, Operations Center, Station Display and Mobile PASS.
+- All eight documented cross-platform publish targets and deployment-manifest integrity verification: PASS.
 
 ## Major production work still outstanding
 
-- live vendor-specific qualification/adapters for selected 911, radio/status, Eventide, traffic/routing, GIS/FileGDB, AIS/marine and camera systems (provider contracts/simulation paths are implemented);
-- live PostgreSQL HA/DR deployment/failover/failback qualification and destructive failure testing;
-- Windows/Linux/Pi/native-mobile installers, signing, upgrades and rollback/support tooling;
-- native Android/iOS packaging, MDM/secure-store/push/offline-map/audio qualification;
-- full docking/floating/multi-monitor/roaming-workspace polish and complete accessibility/theme acceptance;
-- production identity/AD/Entra/passkey/PKI deployment qualification;
-- load/concurrency/penetration/soak/failure-mode testing and real printer/camera/radio/mobile hardware acceptance.
+- load, concurrency, long-duration soak and compound failure-stress qualification;
+- penetration/security review beyond the implemented production-hardening regression;
+- complete accessibility, keyboard, theme, docking/multi-monitor and operator acceptance on target Windows workstations;
+- live Windows Server SCM lifecycle and signed production installer acceptance;
+- live Raspberry Pi Station Display hardware acceptance;
+- native Android/iOS Mobile packaging, MDM, secure-store, push, offline-map and field-device qualification;
+- selection/certification of the production PostgreSQL quorum/STONITH/fencing manager and real Dispatch↔HQ infrastructure RPO/RTO;
+- live vendor conformance for selected 911, radio/status, Eventide/recording, GIS/routing, NERIS, ONVIF/cameras and AIS/marine systems;
+- agency operational acceptance, training, production runbooks and release-candidate sign-off.
+
+Pass 28 whole-system qualification evidence is documented in `docs/ops/OPERATIONAL-E2E-QUALIFICATION.md` and `docs/ops/evidence/PASS-28-*.json`.
 
 See `IMPLEMENTATION-COVERAGE.md` and the numbered `PASS-*-NOTES.md` files for the cumulative implementation history.

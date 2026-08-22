@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "qualifiedAtUtc": "2026-08-22T00:53:42.607677+00:00",
+  "databaseTopology": "PhysicalFailover",
+  "externalWitnessRequiredAndUsed": true,
+  "externalDatabaseFencingRequiredByConfiguration": true,
+  "witnessNetworkPartitionFailsClosed": true,
+  "databaseNetworkPartitionFailsClosed": true,
+  "physicalStreamingReplicaQualified": true,
+  "physicalReplicaPromotionQualified": true,
+  "dispatchToHqApplicationPromotionQualified": true,
+  "oldPrimaryApplicationFencedByIndependentWitness": true,
+  "oldPrimaryRewindQualified": true,
+  "physicalFailbackToDispatchQualified": true,
+  "formerHqPrimaryRewindQualified": true,
+  "pitrPhysicalBaseBackupWalArchiveQualified": true,
+  "pitrIncludedExcludedBoundaryQualified": true,
+  "pitrTargetTime": "2026-08-22 00:53:39.491163+00",
+  "measuredPhysicalFailoverMilliseconds": 1975,
+  "measuredPhysicalFailbackMilliseconds": 2234,
+  "elapsedMilliseconds": 36364,
+  "databaseStonithImplementation": "Qualification harness explicit PostgreSQL process fencing before promotion; production HA manager/STONITH selection remains deployment-specific."
+}

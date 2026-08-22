@@ -1,0 +1,20 @@
+{
+  "result": "PASS",
+  "qualifiedAtUtc": "2026-08-22T00:58:55.201184+00:00",
+  "publishTargets": [
+    "server-linux-x64",
+    "server-win-x64",
+    "cad-win-x64",
+    "station-win-x64",
+    "operations-center-win-x64",
+    "mobile-field-harness-win-x64",
+    "station-display-linux-arm64",
+    "legacy-bridge-win-x64"
+  ],
+  "payloadFiles": 314,
+  "deploymentZipBytes": 191575553,
+  "deploymentZipSha256": "f4466b10c570075d55e93646613f18df5d28a47e228fe39184cf05d730feca39",
+  "zipIntegrity": "PASS",
+  "perFileManifestHashVerification": "PASS",
+  "note": "Cross-target publish and package integrity qualification only; target Windows SCM, Raspberry Pi hardware, code-signing, and native mobile acceptance remain external."
+}

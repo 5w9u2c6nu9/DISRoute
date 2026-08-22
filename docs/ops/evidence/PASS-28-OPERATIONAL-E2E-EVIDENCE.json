@@ -1,0 +1,63 @@
+{
+  "qualification": "DISRoute Pass 28 operational end-to-end",
+  "completedAtUtc": "2026-08-22T00:48:18.536012Z",
+  "serverMode": "Development/FileCheckpoint process-restart qualification",
+  "scenarios": [
+    {
+      "scenario": "routine-call-to-close",
+      "status": "PASS",
+      "incidentId": "8d3e75a5-e604-4f43-b6e7-3d92cfe1b712",
+      "dispatchDeliveries": 3
+    },
+    {
+      "scenario": "active-incident-process-restart",
+      "status": "PASS",
+      "incidentId": "dbb393a1-f32f-413c-b243-0fc39a79e303",
+      "preserved": [
+        "command",
+        "group",
+        "mutual-aid",
+        "site-intelligence",
+        "chat",
+        "dms-link"
+      ]
+    },
+    {
+      "scenario": "mobile-offline-reconciliation",
+      "status": "PASS",
+      "incidentId": "dbb393a1-f32f-413c-b243-0fc39a79e303",
+      "operations": 3,
+      "duplicateReplay": "DuplicateIgnored"
+    },
+    {
+      "scenario": "correction-merge-split",
+      "status": "PASS",
+      "correctionId": "1f7cb667-8a5e-4002-bb41-46f9d371c39f",
+      "mergedIncidentId": "e9c6c6c0-4033-400d-85c1-5290254ad0a2",
+      "splitIncidentId": "6b7f5008-3d9b-4987-9f1d-69bb25212065"
+    },
+    {
+      "scenario": "rms-neris-provider-degradation",
+      "status": "PASS",
+      "rmsReportId": "c0ee47ef-5635-4ec8-8a14-21144a30e2ae",
+      "nerisSubmissionId": "b9d504a1-1c11-4a85-884b-7e92bddb5998",
+      "recoveredState": "Accepted"
+    },
+    {
+      "scenario": "audit-and-durability-closure",
+      "status": "PASS",
+      "auditRecords": 50,
+      "auditChainValid": true,
+      "journalDrained": true
+    }
+  ],
+  "totals": {
+    "scenariosPassed": 6,
+    "scenariosFailed": 0
+  },
+  "nonClaims": [
+    "This local process-restart harness is not a production RTO/RPO measurement.",
+    "Authentication transport/AD/Windows Integrated Authentication is qualified separately from these development-mode operational scenarios.",
+    "Live 911/radio/Eventide/NERIS vendor systems are not contacted; simulation/degraded provider paths are used."
+  ]
+}

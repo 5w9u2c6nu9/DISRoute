@@ -1,4 +1,6 @@
 using DISRoute.Mobile.Core;
+using DISRoute.Application.Security;
+using DISRoute.Security;
 using DISRoute.Client.Common;
 using DISRoute.Contracts.Operational;
 using DISRoute.Server.Operational;
@@ -84,6 +86,20 @@ Check(incompleteWrapperRejected, "incomplete migration transaction wrapper rejec
     Check(policy.DatabaseTopology == HaDatabaseTopologySafety.PhysicalFailover && policy.RequiresExternalWitness && policy.RequiresExternalDatabaseFencing,
         "physical PostgreSQL HA accepts independent witness plus external fencing");
 }
+
+// Pass 28: role/permission boundaries are part of the whole-system operational qualification.
+// These checks intentionally exercise least-privilege expectations that the HTTP permission
+// middleware consumes rather than granting every operational role broad administrative rights.
+Check(RolePermissionMap.HasPermission([Roles.Dispatcher], Permissions.IncidentCreate), "dispatcher can create incidents");
+Check(RolePermissionMap.HasPermission([Roles.Dispatcher], Permissions.IncidentDispatch), "dispatcher can dispatch incidents");
+Check(!RolePermissionMap.HasPermission([Roles.Dispatcher], Permissions.SystemAdmin), "dispatcher cannot administer the system");
+Check(!RolePermissionMap.HasPermission([Roles.Dispatcher], Permissions.NerisSubmit), "dispatcher cannot submit NERIS records by default");
+Check(RolePermissionMap.HasPermission([Roles.StationOfficer], Permissions.StationAcknowledge), "station officer can acknowledge station work");
+Check(!RolePermissionMap.HasPermission([Roles.StationOfficer], Permissions.IncidentDispatch), "station officer cannot dispatch incidents");
+Check(RolePermissionMap.HasPermission([Roles.RecordsReporting], Permissions.RmsEdit), "records role can edit RMS reports");
+Check(RolePermissionMap.HasPermission([Roles.RecordsReporting], Permissions.NerisSubmit), "records role can submit NERIS records");
+Check(!RolePermissionMap.HasPermission([Roles.RecordsReporting], Permissions.UnitAssign), "records role cannot assign operational units");
+Check(Permissions.All.All(permission => RolePermissionMap.HasPermission([Roles.Administrator], permission)), "administrator retains complete permission map");
 
 // PostgreSQL command-boundary correlation is exercised without requiring a live database here:
 // mutations created inside one authoritative batch must remain pending until the state transaction

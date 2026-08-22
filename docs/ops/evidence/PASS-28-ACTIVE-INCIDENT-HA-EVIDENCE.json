@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "qualification": "Pass 28 active-incident application HA continuity",
+  "database": "PostgreSQL 18.6-compatible disposable qualification database",
+  "incidentId": "03ef5eac-fda9-4f0c-9949-c8e430246680",
+  "incidentNumber": "26-004821",
+  "sameIncidentDispatchedBeforeAuthorityTransfer": true,
+  "sameIncidentContinuedOnPromotedNode": true,
+  "postFailoverNarrativeCommitted": true,
+  "sameIncidentClosedOnPromotedNode": true,
+  "oldPrimaryRemainedFencedWhileStandbyAuthoritative": true,
+  "originalNodeLaterReacquiredAuthority": true,
+  "preAndPostFailoverActivityPreserved": true,
+  "auditChainValidAfterAuthorityCycle": true,
+  "note": "Application-node authority continuity on a shared writable PostgreSQL primary. Physical PostgreSQL role change is qualified separately by the Pass 26 physical HA regression."
+}

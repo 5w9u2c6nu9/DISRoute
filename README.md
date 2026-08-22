@@ -2,7 +2,7 @@
 
 DISRoute is a Windows-first public-safety operations platform under active development. Full operational desktop clients are primarily Windows; the backend is intended to support Windows Server or Linux; Raspberry Pi/Linux ARM64 is reserved for lightweight Station Display/wallboard roles.
 
-This repository is the active DISRoute implementation. It compiles as an 18-project .NET 10 solution and includes runnable CAD, Station, Operations Center, Station Display, Mobile field-harness and Server applications. It is still under production-hardening and external-integration qualification; the authoritative product and architecture specification lives in `docs/spec/`.
+This repository is the active DISRoute implementation. It compiles as an 18-project .NET 10 solution and includes runnable CAD, Station, Operations Center, Station Display, Mobile field-harness and Server applications. The current cumulative baseline is Pass 28: deployment/HA foundations and end-to-end operational workflow qualification are implemented and regression-tested. Load/security stress, target hardware, live vendor conformance and release-candidate acceptance remain. The authoritative product and architecture specification lives in `docs/spec/`.
 
 ## Current projects
 

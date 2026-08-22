@@ -288,3 +288,13 @@ Boundary: DISRoute does not supply or certify a production PostgreSQL STONITH/qu
 - Live Pass 27 Production qualification against PostgreSQL 18.6-compatible infrastructure passed, including direct TLS and reverse-proxy modes; exact evidence is under `docs/ops/evidence`.
 - Pass 25 application-HA and Pass 26 physical-HA/PITR destructive regressions both pass on the Pass 27 code.
 - Target Windows SCM, Raspberry Pi hardware, native Android/iOS, signed installers, selected production DB STONITH/quorum, vendor conformance, load/penetration/accessibility and agency acceptance remain explicit external qualification boundaries.
+
+
+## Pass 28 — End-to-End Operational Workflow Qualification
+
+- Added a six-scenario live HTTP operational qualification suite spanning call intake, dispatch, Station acknowledgement, active structure-fire command/mutual-aid/site intelligence/chat/DMS, process restart, Mobile offline reconciliation, corrections/relationships/merge/split, RMS finalization, NERIS degradation/recovery and audit/journal closure.
+- Added explicit least-privilege SelfTest assertions for Dispatcher, StationOfficer, RecordsReporting and Administrator role permissions.
+- Strengthened application HA smoke so the same dispatched incident crosses authority transfer, receives post-failover activity and closure on the promoted node, remains protected from the drained old writer and retains the complete activity/audit history after authority later cycles back.
+- Reran Pass 25 application-HA, Pass 26 physical-HA/PITR and Pass 27 production-deployment/security qualification on the Pass 28 source. All mandatory regressions pass.
+- Reran all eight documented publish targets and independently verified the 314-file deployment ZIP against the embedded per-file SHA-256 manifest.
+- Explicit remaining boundaries: live vendor conformance, target Windows/Raspberry Pi/native-mobile acceptance, signed distribution, production DB STONITH/quorum product certification, load/soak/penetration/accessibility testing and agency operational acceptance.
