@@ -13,7 +13,7 @@ if [[ "${NUGET_CERT_REVOCATION_MODE:-}" == "offline" ]]; then
   echo "NuGet certificate revocation mode: offline (explicit environment setting)."
 fi
 
-dotnet restore "${restore_args[@]}" -p:Platform="Any CPU"
+dotnet restore "${restore_args[@]}" --locked-mode -m:1 -p:Platform="Any CPU"
 dotnet build DISRoute.slnx -c Release --no-restore -p:Platform="Any CPU"
 dotnet src/DISRoute.SelfTest/bin/Release/net10.0/DISRoute.SelfTest.dll
 

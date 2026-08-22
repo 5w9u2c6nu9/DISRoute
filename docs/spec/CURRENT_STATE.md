@@ -1,8 +1,8 @@
-# Current DISRoute Implementation State — Pass 29
+# Current DISRoute Implementation State — Pass 30 / 1.0.0-rc.1
 
 ## Authoritative checkpoint
 
-The current implementation is the cumulative Pass 29 source checkpoint. It contains the full application through all previous passes. Pass 29 adds reusable load/resilience/security failure-stress qualification and targeted hardening rather than a new product subsystem.
+The current implementation is the cumulative Pass 30 release-candidate source checkpoint (`1.0.0-rc.1`). It contains the full application through all previous passes. Pass 30 freezes the implementation with an exact SDK, dependency lock files, deterministic release packaging, CycloneDX SBOM generation, CI advisory gating and an explicit production-acceptance matrix rather than adding a new operational subsystem.
 
 ## Platform baseline
 
@@ -29,7 +29,7 @@ The current implementation is the cumulative Pass 29 source checkpoint. It conta
 - File-checkpoint runtime persistence, command journal, backup/restore, durable idempotency and PostgreSQL-shaped migrations/projection through schema version 20.
 - HA/DR coordination architecture preserving Dispatch Primary -> Dispatch Local Standby -> HQ DR.
 
-## Current Pass 29 verification baseline
+## Current Pass 30 release-candidate baseline
 
 - 18-project Release build with warnings-as-errors: PASS — 0 warnings / 0 errors.
 - SelfTest including least-privilege role matrix: PASS.
@@ -42,9 +42,8 @@ The current implementation is the cumulative Pass 29 source checkpoint. It conta
 - Avalonia startup smoke: CAD, Station, Operations Center, Station Display and Mobile PASS.
 - All eight documented cross-platform publish targets and deployment-manifest integrity verification: PASS.
 
-## Major production work still outstanding
+## External production acceptance still outstanding
 
-- load, concurrency, long-duration soak and compound failure-stress qualification;
 - penetration/security review beyond the implemented production-hardening regression;
 - complete accessibility, keyboard, theme, docking/multi-monitor and operator acceptance on target Windows workstations;
 - live Windows Server SCM lifecycle and signed production installer acceptance;
@@ -54,6 +53,6 @@ The current implementation is the cumulative Pass 29 source checkpoint. It conta
 - live vendor conformance for selected 911, radio/status, Eventide/recording, GIS/routing, NERIS, ONVIF/cameras and AIS/marine systems;
 - agency operational acceptance, training, production runbooks and release-candidate sign-off.
 
-Pass 28 whole-system qualification evidence remains in `docs/ops/OPERATIONAL-E2E-QUALIFICATION.md` and `docs/ops/evidence/PASS-28-*.json`. Pass 29 stress/failure evidence is documented in `docs/ops/PASS-29-STRESS-QUALIFICATION.md` and `docs/ops/evidence/PASS-29-*.json`.
+Pass 28 whole-system qualification evidence remains in `docs/ops/OPERATIONAL-E2E-QUALIFICATION.md` and `docs/ops/evidence/PASS-28-*.json`. Pass 29 stress/failure evidence is documented in `docs/ops/PASS-29-STRESS-QUALIFICATION.md` and `docs/ops/evidence/PASS-29-*.json`. Pass 30 release acceptance and limitations are in `docs/ops/RELEASE-CANDIDATE-ACCEPTANCE.md`, `KNOWN-LIMITATIONS.md`, `RELEASE-CHECKLIST.md`, and the `1.0.0-rc.1` release notes.
 
 See `IMPLEMENTATION-COVERAGE.md` and the numbered `PASS-*-NOTES.md` files for the cumulative implementation history.

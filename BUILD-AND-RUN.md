@@ -127,3 +127,18 @@ The scripts publish Windows and Linux server targets, Windows CAD/Station/Operat
 PostgreSQL production databases must use UTF8 encoding; DISRoute fails startup on incompatible encodings such as SQL_ASCII.
 
 Pass 29 has been restored and Release-built in the implementation environment using the .NET 10 SDK, including all five Avalonia applications, with **0 warnings and 0 errors**. `DISRoute.SelfTest`, the Pass 29 stress/fault suite, PostgreSQL active-load failover, the six-scenario operational end-to-end suite, active-incident PostgreSQL application-HA continuity smoke, restart/backup/restore runtime smoke, Pass 25/26 PostgreSQL regressions, Pass 27 production-security regression and all five Linux/Xvfb Avalonia startup smokes pass. Target Windows/Raspberry Pi hardware, native mobile packaging, live vendor conformance, independent penetration/accessibility testing and agency acceptance remain external.
+
+
+## Pass 30 release-candidate gates
+
+DISRoute is versioned as `1.0.0-rc.1` and pins SDK `10.0.400` in `global.json`. All 18 projects carry `packages.lock.json`; production/CI restore should use locked mode. The online CI path sets `DISROUTE_ENABLE_NUGET_AUDIT=true`, which audits all direct/transitive NuGet packages and promotes NU1901–NU1904 advisory warnings to errors.
+
+Generate an SBOM after restore:
+
+```bash
+SOURCE_DATE_EPOCH=<release-epoch> python3 scripts/generate-sbom.py . --output artifacts/DISRoute-1.0.0-rc.1-sbom.cdx.json
+```
+
+After producing the eight publish targets, compare two independent publish trees with `scripts/compare-publish-trees.py`. Then run `scripts/release-candidate-qualification.py` with a fixed `--source-date-epoch`; it packages the same publish payload twice and fails unless both deployment ZIPs are byte-identical.
+
+See `docs/ops/RELEASE-CANDIDATE-ACCEPTANCE.md`, `KNOWN-LIMITATIONS.md`, and `RELEASE-CHECKLIST.md` before treating an implementation RC as approved for agency production.

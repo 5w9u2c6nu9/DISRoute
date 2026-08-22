@@ -5,12 +5,16 @@ OUT="${1:-$ROOT/artifacts/publish}"
 CONFIG_ARGS=()
 if [[ -n "${DISROUTE_NUGET_CONFIG:-}" ]]; then CONFIG_ARGS+=(--configfile "$DISROUTE_NUGET_CONFIG"); fi
 rm -rf "$OUT" && mkdir -p "$OUT"
-dotnet restore "$ROOT/DISRoute.slnx" "${CONFIG_ARGS[@]}" -m:1
+dotnet restore "$ROOT/DISRoute.slnx" "${CONFIG_ARGS[@]}" --locked-mode -m:1
+RID_LOCK_ROOT="$(mktemp -d)"
+trap 'rm -rf "$RID_LOCK_ROOT"' EXIT
 publish(){
   local project="$1" rid="$2" out="$3"
-  local -a restore_prop=()
-  [[ -n "${DISROUTE_NUGET_CONFIG:-}" ]] && restore_prop+=("-p:RestoreConfigFile=$DISROUTE_NUGET_CONFIG")
-  dotnet publish "$ROOT/$project" -c Release -r "$rid" --self-contained false -o "$OUT/$out" "${restore_prop[@]}"
+  local -a restore_args=("$ROOT/$project" -r "$rid" --force-evaluate --disable-parallel -m:1 "-p:DISROUTE_RID_RESTORE_DIR=$RID_LOCK_ROOT/$out")
+  [[ -n "${DISROUTE_NUGET_CONFIG:-}" ]] && restore_args+=(--configfile "$DISROUTE_NUGET_CONFIG")
+  mkdir -p "$RID_LOCK_ROOT/$out"
+  dotnet restore "${restore_args[@]}"
+  dotnet publish "$ROOT/$project" -c Release -r "$rid" --self-contained false -o "$OUT/$out" --no-restore -m:1
 }
 publish src/DISRoute.Server/DISRoute.Server.csproj linux-x64 server-linux-x64
 publish src/DISRoute.Server/DISRoute.Server.csproj win-x64 server-win-x64
@@ -23,4 +27,9 @@ publish src/DISRoute.LegacyBridge/DISRoute.LegacyBridge.csproj win-x64 legacy-br
 cp -a "$ROOT/deploy" "$OUT/deploy"
 cp -a "$ROOT/docs/ops/PRODUCTION-DEPLOYMENT.md" "$OUT/PRODUCTION-DEPLOYMENT.md"
 cp -a "$ROOT/docs/ops/UPGRADE-ROLLBACK.md" "$OUT/UPGRADE-ROLLBACK.md"
+cp -a "$ROOT/docs/ops/RELEASE-CANDIDATE-ACCEPTANCE.md" "$OUT/RELEASE-CANDIDATE-ACCEPTANCE.md"
+cp -a "$ROOT/docs/ops/KNOWN-LIMITATIONS.md" "$OUT/KNOWN-LIMITATIONS.md"
+cp -a "$ROOT/docs/ops/RELEASE-CHECKLIST.md" "$OUT/RELEASE-CHECKLIST.md"
+cp -a "$ROOT/docs/ops/RELEASE-NOTES-1.0.0-rc.1.md" "$OUT/RELEASE-NOTES-1.0.0-rc.1.md"
+python3 "$ROOT/scripts/verify-published-dependencies.py" "$ROOT" "$OUT"
 echo "Published DISRoute production artifacts to $OUT"

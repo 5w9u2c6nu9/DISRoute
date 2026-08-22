@@ -308,3 +308,13 @@ Boundary: DISRoute does not supply or certify a production PostgreSQL STONITH/qu
 - Reran Pass 25 application HA, Pass 26 physical HA/DR/PITR and Pass 27 production-security regression on the Pass 29 source.
 - Preserved 18 projects, 313 API routes and 20 PostgreSQL migrations; Pass 29 is qualification/hardening rather than subsystem expansion.
 - Hardened PostgreSQL startup to require UTF8 database encoding; SQL_ASCII is rejected before operational startup, and active-incident HA continuity was requalified on real PostgreSQL 18.6 UTF8.
+
+
+## Pass 30 — Release candidate / final production readiness
+
+- Versioned the cumulative implementation as `1.0.0-rc.1` with deterministic assembly metadata and an exact .NET 10.0.400 SDK pin.
+- Added one NuGet `packages.lock.json` per project and locked-restore qualification across all 18 projects.
+- Added CI-only NuGet audit escalation (`NU1901`–`NU1904`) plus GitHub locked restore / Release build / SelfTest / source-verifier workflow.
+- Added deterministic `SOURCE_DATE_EPOCH` deployment packaging, byte-for-byte publish-tree comparison, CycloneDX 1.6 SBOM generation and release-candidate manifest generation.
+- Added explicit RC acceptance, release checklist, release notes and known-limitations documentation separating implementation qualification from target hardware, signing, vendor, penetration/accessibility and agency production acceptance.
+- Pass 30 does not add schema migrations; production schema remains version 20.

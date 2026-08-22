@@ -114,6 +114,42 @@ if (root/'src'/'DISRoute.Server'/'Operational'/'WindowsServiceHost.cs').exists()
     for token in ('StartServiceCtrlDispatcher','RegisterServiceCtrlHandlerEx','ServiceControlStop'):
         if token not in svc: errors.append(f'src/DISRoute.Server/Operational/WindowsServiceHost.cs: missing Windows SCM token {token}')
 
+
+# Pass 30 release-candidate / supply-chain artifacts are mandatory.
+pass30_required=[
+    root/'global.json',
+    root/'.github'/'workflows'/'verify.yml',
+    root/'scripts'/'generate-sbom.py',
+    root/'scripts'/'compare-publish-trees.py',
+    root/'scripts'/'release-candidate-qualification.py',
+    root/'scripts'/'verify-published-dependencies.py',
+    root/'docs'/'ops'/'RELEASE-CANDIDATE-ACCEPTANCE.md',
+    root/'docs'/'ops'/'KNOWN-LIMITATIONS.md',
+    root/'docs'/'ops'/'RELEASE-CHECKLIST.md',
+    root/'docs'/'ops'/'RELEASE-NOTES-1.0.0-rc.1.md',
+    root/'PASS-30-NOTES.md',
+]
+for required in pass30_required:
+    if not required.exists(): errors.append(f'{required.relative_to(root)}: required Pass 30 RC artifact missing')
+props=(root/'Directory.Build.props').read_text(encoding='utf-8')
+for token in ('<Version>1.0.0-rc.1</Version>','<Deterministic>true</Deterministic>','<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>'):
+    if token not in props: errors.append(f'Directory.Build.props: missing RC token {token}')
+try:
+    global_json=json.loads((root/'global.json').read_text(encoding='utf-8'))
+    sdk=global_json.get('sdk',{})
+    if sdk.get('version') != '10.0.400' or sdk.get('rollForward') != 'disable': errors.append('global.json: Pass 30 requires exact SDK 10.0.400 with rollForward=disable')
+except Exception as ex:
+    errors.append(f'global.json: invalid JSON: {ex}')
+locks=sorted((root/'src').glob('*/packages.lock.json'))
+if len(locks) != len(projects): errors.append(f'Pass 30 requires one packages.lock.json per project: {len(locks)} locks for {len(projects)} projects')
+else:
+    for lock in locks:
+        try:
+            data=json.loads(lock.read_text(encoding='utf-8'))
+            if data.get('version') not in (1,2): errors.append(f'{lock.relative_to(root)}: unsupported lock-file version')
+        except Exception as ex:
+            errors.append(f'{lock.relative_to(root)}: invalid lock JSON: {ex}')
+
 # Hard-branding guard. Generic prose use of the word legacy is allowed; historical vendor/product tokens are not.
 forbidden=['Emergency'+'Plus','EPL'+'Server','EPL'+'Local']
 for p in root.rglob('*'):

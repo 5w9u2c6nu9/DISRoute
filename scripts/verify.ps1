@@ -3,7 +3,7 @@ Push-Location (Join-Path $PSScriptRoot '..')
 try {
     python scripts/verify-source.py
     dotnet --info
-    $restoreArgs = @('restore', 'DISRoute.slnx', '-p:Platform=Any CPU')
+    $restoreArgs = @('restore', 'DISRoute.slnx', '--locked-mode', '-m:1', '-p:Platform=Any CPU')
     if ($env:DISROUTE_NUGET_CONFIG) {
         $restoreArgs += @('--configfile', $env:DISROUTE_NUGET_CONFIG)
     }
