@@ -69,6 +69,7 @@ cat >"$WORK/external-bad.json" <<'JSON'
 {"Security":{"RequireAuthentication":false}}
 JSON
 expect_reject external-config 'authentication disabled' "DISROUTE_CONFIG_FILE=$WORK/external-bad.json"
+expect_reject crash-injection 'crash injection' Qualification__EnableCrashInjection=true
 
 echo '[deployqual] production startup via trusted reverse proxy + secret files'
 env "${base_env[@]}" "$DOTNET_BIN" "$SERVER_DLL" >"$WORK/server.log" 2>&1 & PID=$!
@@ -98,11 +99,17 @@ grep -qi '^Content-Security-Policy:' "$headers"
 
 status=""
 for _ in $(seq 1 80); do
-  status=$(curl -s -o /dev/null -w '%{http_code}' -H 'X-Forwarded-Proto: https' "http://127.0.0.1:$PORT/health/live" || true)
+  status=$(curl -s -o /dev/null -w '%{http_code}' -H 'X-Forwarded-Proto: https' "http://127.0.0.1:$PORT/api/admin/deployment/status" || true)
   [[ "$status" == 429 ]] && break
   sleep .01
 done
 [[ "$status" == 429 ]] || { echo "rate-limit did not return 429; last=$status" >&2; exit 1; }
+retry_after=$(curl -sS -D - -o /dev/null -H 'X-Forwarded-Proto: https' "http://127.0.0.1:$PORT/api/admin/deployment/status" | awk 'BEGIN{IGNORECASE=1} /^Retry-After:/ {gsub("\r",""); print $2; exit}')
+[[ "$retry_after" == 60 ]] || { echo "rate-limit Retry-After missing/incorrect: $retry_after" >&2; exit 1; }
+health_after_limit=$(curl -sS -o /dev/null -w '%{http_code}' -H 'X-Forwarded-Proto: https' "http://127.0.0.1:$PORT/health/live")
+[[ "$health_after_limit" == 200 ]] || { echo "health/live was affected by API rate limit: $health_after_limit" >&2; exit 1; }
+ready_after_limit=$(curl -sS -o /dev/null -w '%{http_code}' -H 'X-Forwarded-Proto: https' "http://127.0.0.1:$PORT/health/ready")
+[[ "$ready_after_limit" == 200 || "$ready_after_limit" == 503 ]] || { echo "health/ready was rate-limited: $ready_after_limit" >&2; exit 1; }
 
 kill "$PID"; wait "$PID" || true; PID=""
 
@@ -147,7 +154,7 @@ json.dump({
   'qualification':'production-deployment-security-runtime',
   'status':'PASS',
   'postgresql':'real disposable PostgreSQL supplied by operator',
-  'checks':['production fail-closed auth/MFA/plaintext-secret/reverse-proxy checks','external config loading','secret://file PostgreSQL connection','trusted forwarded-proto HTTPS enforcement','direct Kestrel TLS with certificate-age/permission validation','sanitized anonymous readiness and protected admin status','TLS private-file permission rejection','security headers and HSTS','Kestrel Server header suppressed','global fixed-window rate limit','systemd unit verification'],
+  'checks':['production fail-closed auth/MFA/plaintext-secret/reverse-proxy checks','external config loading','secret://file PostgreSQL connection','trusted forwarded-proto HTTPS enforcement','direct Kestrel TLS with certificate-age/permission validation','sanitized anonymous readiness and protected admin status','TLS private-file permission rejection','security headers and HSTS','Kestrel Server header suppressed','global fixed-window API rate limit with Retry-After and health-probe exemption','systemd unit verification'],
   'port':int(sys.argv[2]),
   'completedAtUtc':datetime.datetime.now(datetime.timezone.utc).isoformat()
 },open(sys.argv[1],'w'),indent=2)

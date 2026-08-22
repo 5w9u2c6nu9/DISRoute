@@ -9,6 +9,20 @@ internal sealed record PublishedPostgreSqlMigration(int Version, string FileName
 internal static class PostgreSqlDatabaseSafety
 {
     internal const long MigrationAdvisoryLockKey = 0x4452534D494752; // stable DISRoute migration lock key
+    public static async Task EnsureUtf8EncodingAsync(NpgsqlConnection connection, CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SHOW server_encoding";
+        var value = Convert.ToString(await command.ExecuteScalarAsync(cancellationToken), System.Globalization.CultureInfo.InvariantCulture)?.Trim();
+        if (!string.Equals(value, "UTF8", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(value, "UTF-8", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"DISRoute PostgreSQL requires UTF8 database encoding because operational JSON and text may contain Unicode. " +
+                $"The connected database reports server_encoding='{value ?? "unknown"}'. Create or restore the DISRoute database with UTF8 encoding before startup.");
+        }
+    }
+
     public static async Task<bool> IsWritablePrimaryAsync(NpgsqlConnection connection, bool proveWrite, CancellationToken cancellationToken)
     {
         await using (var state = connection.CreateCommand())

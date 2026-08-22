@@ -185,6 +185,7 @@ public sealed class StatePersistenceService : IHostedService, IDisposable
     {
         var migrationDirectory = Path.Combine(AppContext.BaseDirectory, "db", "migrations");
         var migrations = PostgreSqlDatabaseSafety.LoadPublishedMigrations(migrationDirectory);
+        await PostgreSqlDatabaseSafety.EnsureUtf8EncodingAsync(connection, cancellationToken);
         var writable = await PostgreSqlDatabaseSafety.IsWritablePrimaryAsync(connection, proveWrite: false, cancellationToken);
         if (writable)
         {

@@ -75,6 +75,10 @@ public sealed class DispatchDeliveryWorker(
                         }
                     }
                 }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    break;
+                }
                 catch (Exception ex)
                 {
                     OperationalLog.DispatchDeliveryWorkerFailed(logger, ex);

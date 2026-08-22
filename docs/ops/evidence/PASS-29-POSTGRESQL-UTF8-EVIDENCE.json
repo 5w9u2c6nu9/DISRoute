@@ -1,0 +1,18 @@
+{
+  "pass": 29,
+  "qualification": "postgresql-utf8-startup-and-active-incident-ha",
+  "status": "PASS",
+  "postgresql": "18.6-compatible disposable qualification instances",
+  "checks": {
+    "sqlAsciiRejectedBeforeOperationalStartup": true,
+    "sqlAsciiReportedEncoding": "SQL_ASCII",
+    "requiredEncoding": "UTF8",
+    "utf8DatabaseReportedEncoding": "UTF8",
+    "activeIncidentHaContinuityOnUtf8": true,
+    "dispatchAndRunSheetUnicodePathPassed": true,
+    "postFailoverNarrativeCommitted": true,
+    "incidentClosedAfterAuthorityTransfer": true,
+    "originalNodeReacquiredAuthority": true
+  },
+  "note": "The SQL_ASCII rejection proves fail-closed database-encoding safety. The UTF8 active-incident run proves the same continuity path succeeds with Unicode-capable PostgreSQL. This is qualification-environment evidence, not a production SLA or vendor certification."
+}

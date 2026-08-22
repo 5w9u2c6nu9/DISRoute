@@ -40,6 +40,16 @@ if (builder.Environment.IsProduction() || builder.Configuration.GetValue("Loggin
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = static async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.Headers["Retry-After"] = "60";
+        context.HttpContext.Response.Headers.CacheControl = "no-store";
+        await context.HttpContext.Response.WriteAsJsonAsync(new
+        {
+            error = "Rate limit exceeded.",
+            retryAfterSeconds = 60
+        }, cancellationToken);
+    };
     var permitLimit = Math.Clamp(builder.Configuration.GetValue("Security:RateLimit:PermitLimitPerMinute", 600), 1, 100_000);
     var queueLimit = Math.Clamp(builder.Configuration.GetValue("Security:RateLimit:QueueLimit", 0), 0, 1000);
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
@@ -202,14 +212,14 @@ app.UseMiddleware<PermissionGuardMiddleware>();
 
 app.MapGet("/health", (OperationalStore store, IConfiguration configuration) => Results.Ok(new SystemStatusDto(
     "DISRoute.Server", "healthy", configuration["Persistence:Provider"] ?? "InMemory", "SignalR",
-    store.GetIncidents(openOnly: true).Count, OperationsHub.ConnectedClients, DateTimeOffset.UtcNow))).AllowAnonymous();
+    store.GetIncidents(openOnly: true).Count, OperationsHub.ConnectedClients, DateTimeOffset.UtcNow))).AllowAnonymous().DisableRateLimiting();
 
 app.MapGet("/health/live", () => Results.Ok(new
 {
     service = "DISRoute.Server",
     status = "alive",
     asOfUtc = DateTimeOffset.UtcNow
-})).AllowAnonymous();
+})).AllowAnonymous().DisableRateLimiting();
 
 app.MapGet("/health/ready", (StatePersistenceService persistence, DurableMutationWriterService journal, HaCoordinatorService ha) =>
 {
@@ -235,7 +245,7 @@ app.MapGet("/health/ready", (StatePersistenceService persistence, DurableMutatio
         asOfUtc = DateTimeOffset.UtcNow
     };
     return Results.Json(payload, statusCode: ready ? StatusCodes.Status200OK : StatusCodes.Status503ServiceUnavailable);
-}).AllowAnonymous();
+}).AllowAnonymous().DisableRateLimiting();
 
 var operationsHub = app.MapHub<OperationsHub>("/hubs/operations");
 if (!requireAuthentication) operationsHub.AllowAnonymous();

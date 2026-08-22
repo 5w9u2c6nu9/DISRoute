@@ -31,6 +31,10 @@ public sealed class NerisSubmissionWorker(
                     foreach (var queued in store.NerisSubmissions.Where(x => x.State == "Queued").OrderBy(x => x.UpdatedAtUtc).Take(20).ToArray())
                         await ProcessOneAsync(queued.Id, stoppingToken);
                 }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    break;
+                }
                 catch (Exception ex)
                 {
                     OperationalLog.NerisSubmissionWorkerFailed(logger, ex);
@@ -53,6 +57,10 @@ public sealed class NerisSubmissionWorker(
         {
             provider = service.ResolveProvider(snapshot.ProviderKey);
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             var failedStart = await BeginDurablyAsync(submissionId, snapshot.ProviderKey ?? "unconfigured", cancellationToken);
@@ -67,6 +75,10 @@ public sealed class NerisSubmissionWorker(
         try
         {
             validation = await provider.ValidateReportAsync(fireReport, cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -86,6 +98,10 @@ public sealed class NerisSubmissionWorker(
         {
             var context = new ProviderOperationContext(started.Attempt.OperationId, started.Submission.AgencyId, started.Submission.IncidentId, started.Attempt.Actor, started.Attempt.RequestedAtUtc, started.Submission.Id.ToString("N"));
             result = await provider.SubmitReportAsync(context, fireReport, cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (Exception ex)
         {

@@ -41,6 +41,10 @@ public sealed class AlertEscalationWorker(
                         store.EscalateUnacknowledgedAlerts(DateTimeOffset.UtcNow, advisory, warning);
                     }
                 }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    break;
+                }
                 catch (Exception ex)
                 {
                     OperationalLog.AlertEscalationWorkerFailed(logger, ex);

@@ -1,0 +1,19 @@
+{
+  "pass": 29,
+  "qualification": "cross-platform-publish-and-deployment-package-integrity",
+  "status": "PASS",
+  "publishTargets": [
+    "server-linux-x64",
+    "server-win-x64",
+    "cad-win-x64",
+    "station-win-x64",
+    "operations-center-win-x64",
+    "mobile-field-harness-win-x64",
+    "station-display-linux-arm64",
+    "legacy-bridge-win-x64"
+  ],
+  "deploymentPayloadFiles": 314,
+  "deploymentZipSha256": "e0425ffa15db7624bcb1abe23ed1db28535d8f825c9d2555e769c1b36ce04b98",
+  "deploymentManifestHashesVerified": true,
+  "note": "Published with the existing .NET 10.0.11 runtime packs in the qualification environment. This is artifact-build qualification, not target-hardware acceptance or code-signing certification."
+}

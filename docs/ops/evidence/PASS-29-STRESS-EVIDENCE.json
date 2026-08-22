@@ -1,0 +1,85 @@
+{
+  "pass": 29,
+  "startedAtUtc": "2026-08-22T06:31:15.061927Z",
+  "qualificationEnvironment": {
+    "kind": "isolated Development/FileCheckpoint stress lab",
+    "productionCapacityBenchmark": false
+  },
+  "phases": [
+    {
+      "name": "concurrent-load-and-command-semantics",
+      "status": "PASS",
+      "creates": 96,
+      "readRequests": 256,
+      "sameKeyReplays": 32,
+      "optimisticContenders": 16,
+      "createLatencyMs": {
+        "p50": 62.46,
+        "p95": 306.79,
+        "p99": 320.87,
+        "max": 323.94
+      },
+      "readLatencyMs": {
+        "p50": 12.55,
+        "p95": 28.19,
+        "p99": 34.63,
+        "max": 40.46
+      },
+      "rssKiB": {
+        "before": 151292,
+        "after": 236888,
+        "delta": 85596
+      },
+      "fdCount": {
+        "before": 275,
+        "after": 275,
+        "delta": 0
+      }
+    },
+    {
+      "name": "sigkill-after-ack-recovery",
+      "status": "PASS",
+      "incidentId": "158ddc49-593c-40ec-81df-81754cb0d34c",
+      "activityEntries": 2
+    },
+    {
+      "name": "hostile-input-and-request-limits",
+      "status": "PASS",
+      "malformedStatus": 400,
+      "oversizeStatus": 413,
+      "overlongKeyStatus": 400
+    },
+    {
+      "name": "rate-limit-and-health-isolation",
+      "status": "PASS",
+      "apiStatuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        429,
+        429,
+        429,
+        429,
+        429,
+        429,
+        429
+      ],
+      "healthStatuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ],
+      "retryAfter": "60"
+    }
+  ],
+  "status": "PASS",
+  "completedAtUtc": "2026-08-22T06:31:24.663378Z",
+  "workDirectory": null
+}

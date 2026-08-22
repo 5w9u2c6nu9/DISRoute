@@ -1,0 +1,17 @@
+{
+  "pass": 29,
+  "startedAtUtc": "2026-08-22T06:36:14.363632Z",
+  "kind": "shared-primary PostgreSQL active-load application failover",
+  "productionCapacityBenchmark": false,
+  "status": "PASS",
+  "completedAtUtc": "2026-08-22T06:36:22.647045Z",
+  "initialWriter": "p29-a",
+  "survivorWriter": "p29-b",
+  "commands": 80,
+  "commandsRetried": 50,
+  "maxAttempts": 31,
+  "measuredFailoverMilliseconds": 1105.6,
+  "measurementsAreProductionSla": false,
+  "journalDrained": true,
+  "auditValid": true
+}

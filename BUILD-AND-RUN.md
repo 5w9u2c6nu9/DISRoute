@@ -21,6 +21,17 @@ Linux/macOS:
 The sequence performs the repository structural/branding checks, restores packages, Release-builds all 18 projects in `DISRoute.slnx` with warnings-as-errors, and runs `DISRoute.SelfTest`. The self-test covers incident intake, duplicate detection, response recommendation, assignments, Dispatch Commit, Station delivery/acknowledgement, Fire Watch, premise/preplan/CRG/hydrant, GIS, Mayday, command/groups/mutual aid, Mobile encrypted queue/sync, collaborative narrative, additional alarm/cancellation/AVL/corrections, Workforce rotations/overtime/timesheets/payroll, DMS approval workflow, RMS violation/hazmat/investigation/qualification, canonical RMS report lifecycle, RMS-linked NERIS projection/queue/reconciliation safety, persistence round-trip and audit-chain integrity. Pass 28 also locks the production role/permission matrix into SelfTest.
 
 
+
+### Pass 29 stress/fault qualification
+
+After a Release build, run the isolated FileCheckpoint stress suite:
+
+```bash
+DOTNET_BIN=/path/to/dotnet ./scripts/stress-qualification.sh
+```
+
+For a disposable PostgreSQL database, `scripts/postgresql-load-failover-qualification.py` runs retry-safe concurrent commands across an abrupt application-primary loss and verifies exactly-once durable results, journal drain and audit integrity. See `docs/ops/PASS-29-STRESS-QUALIFICATION.md`.
+
 ### Pass 28 operational end-to-end qualification
 
 After the Release build, run the live cumulative operational scenario suite:
@@ -113,4 +124,6 @@ The scripts publish Windows and Linux server targets, Windows CAD/Station/Operat
 
 ## Verification status of this implementation pass
 
-Pass 28 has been restored and Release-built in the implementation environment using the .NET 10 SDK, including all five Avalonia applications, with **0 warnings and 0 errors**. `DISRoute.SelfTest`, the six-scenario operational end-to-end suite, active-incident PostgreSQL application-HA continuity smoke, restart/backup/restore runtime smoke, Pass 25/26 PostgreSQL regressions, Pass 27 production-security regression, all five Linux/Xvfb Avalonia startup smokes and all eight documented publish targets pass. Target Windows/Raspberry Pi hardware, native mobile packaging, live vendor conformance, production load/penetration/accessibility testing and agency acceptance remain external.
+PostgreSQL production databases must use UTF8 encoding; DISRoute fails startup on incompatible encodings such as SQL_ASCII.
+
+Pass 29 has been restored and Release-built in the implementation environment using the .NET 10 SDK, including all five Avalonia applications, with **0 warnings and 0 errors**. `DISRoute.SelfTest`, the Pass 29 stress/fault suite, PostgreSQL active-load failover, the six-scenario operational end-to-end suite, active-incident PostgreSQL application-HA continuity smoke, restart/backup/restore runtime smoke, Pass 25/26 PostgreSQL regressions, Pass 27 production-security regression and all five Linux/Xvfb Avalonia startup smokes pass. Target Windows/Raspberry Pi hardware, native mobile packaging, live vendor conformance, independent penetration/accessibility testing and agency acceptance remain external.

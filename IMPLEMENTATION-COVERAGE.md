@@ -298,3 +298,13 @@ Boundary: DISRoute does not supply or certify a production PostgreSQL STONITH/qu
 - Reran Pass 25 application-HA, Pass 26 physical-HA/PITR and Pass 27 production-deployment/security qualification on the Pass 28 source. All mandatory regressions pass.
 - Reran all eight documented publish targets and independently verified the 314-file deployment ZIP against the embedded per-file SHA-256 manifest.
 - Explicit remaining boundaries: live vendor conformance, target Windows/Raspberry Pi/native-mobile acceptance, signed distribution, production DB STONITH/quorum product certification, load/soak/penetration/accessibility testing and agency operational acceptance.
+
+
+## Pass 29 — Load, Resilience, Security & Failure-Stress Qualification
+
+- Added reusable concurrent FileCheckpoint stress/fault qualification and PostgreSQL active-load application-failover qualification.
+- Hardened global rate limiting with structured backoff and isolated health probes from client throttling.
+- Hardened background-worker cancellation so planned shutdown does not create false operational failure logs or NERIS failure state.
+- Reran Pass 25 application HA, Pass 26 physical HA/DR/PITR and Pass 27 production-security regression on the Pass 29 source.
+- Preserved 18 projects, 313 API routes and 20 PostgreSQL migrations; Pass 29 is qualification/hardening rather than subsystem expansion.
+- Hardened PostgreSQL startup to require UTF8 database encoding; SQL_ASCII is rejected before operational startup, and active-incident HA continuity was requalified on real PostgreSQL 18.6 UTF8.
